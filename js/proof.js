@@ -267,8 +267,8 @@ function drawChart(host, rows, grow) {
   } else {
     const label = svgNode('text', { class: 'slotlab', 'text-anchor': 'middle' });
     label.append(
-      svgNode('tspan', { x: r(mid), y: r(top + H / 2 - 4) }, 'Your test'),
-      svgNode('tspan', { x: r(mid), dy: 19 }, 'goes here'),
+      svgNode('tspan', { x: r(mid), y: r(top + H / 2 - 4) }, 'Next'),
+      svgNode('tspan', { x: r(mid), dy: 19 }, 'season'),
     );
     svg.append(label);
   }
