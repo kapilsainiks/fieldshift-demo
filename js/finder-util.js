@@ -376,16 +376,75 @@ function tracedFieldOf(field) {
   return TRACED.find((traced) => pointInRing(field.pin, traced.ring));
 }
 
-/* The satellite record for a picked field (state.field): { acres, years: [{ year, growing }] },
-   oldest year first. `acres` is the size of the traced field the record was made on. null when the
-   field is none of the three. */
+/* ---------- The satellite zone: every field of 40 acres or more in the three counties ----------
+
+   data/satellite-zone.json (made by tools/build_satellite_hls.py from NASA HLS greenness, with
+   tools/build_satellite_gibs.py's NASA MODIS record for the fields HLS did not cover):
+   { meta: { zone: { counties: ['Adams', ...] }, years: [first, last], min_acres, ... },
+     fields: { "<field id>": [acres, "0110..."] or [acres, "0110...", "h"] } }
+   The string has one character per year from meta.years[0]: "1" crop, "0" rest, "-" no call.
+   A third item "h" means the record is from HLS; without it, from MODIS.
+   The app loads it once and hands it to setSatelliteZone. Until then only the traced fields have
+   a record. */
+
+let zone = null;
+
+export function setSatelliteZone(data) {
+  zone = data && data.fields && Array.isArray(data.meta?.zone?.counties) && Number.isInteger(data.meta?.years?.[0]) ? data : null;
+}
+
+/* True when the field is in a county the zone covers. */
+function inZone(field) {
+  return Boolean(zone && field.geometry && zone.meta.zone.counties.includes(field.props?.co));
+}
+
+/* One field's entry as { acres, years: [{ year, growing }], source }; years with no call are left
+   out. `source` is 'hls' when the entry is marked "h", else 'modis'. null for a missing or
+   malformed entry. */
+export function readZoneEntry(entry, firstYear) {
+  if (!Array.isArray(entry) || !Number.isFinite(entry[0]) || typeof entry[1] !== 'string') return null;
+  const years = [];
+  [...entry[1]].forEach((mark, index) => {
+    if (mark === '1' || mark === '0') years.push({ year: firstYear + index, growing: mark === '1' });
+  });
+  return years.length ? { acres: entry[0], years, source: entry[2] === 'h' ? 'hls' : 'modis' } : null;
+}
+
+function zoneRecordOf(field) {
+  if (!zone || field.id == null || !field.geometry) return null;
+  return readZoneEntry(zone.fields[String(field.id)], zone.meta.years[0]);
+}
+
+/* The satellite record for a picked field (state.field): { acres, years: [{ year, growing }], source },
+   oldest year first. `source` is 'hls' for the three traced fields (they come first) and, for the
+   fields in the satellite zone, 'hls' or 'modis' as the zone file says. `acres` is the size of
+   the field the record was made on. null when the field has no record. */
 export function satelliteRecordFor(field) {
   const traced = tracedFieldOf(field);
-  if (!traced) return null;
-  const years = Object.entries(traced.years)
-    .map(([year, growing]) => ({ year: Number(year), growing: growing === 1 }))
-    .sort((a, b) => a.year - b.year);
-  return { acres: traced.acres, years };
+  if (traced) {
+    const years = Object.entries(traced.years)
+      .map(([year, growing]) => ({ year: Number(year), growing: growing === 1 }))
+      .sort((a, b) => a.year - b.year);
+    return { acres: traced.acres, years, source: 'hls' };
+  }
+  const found = zoneRecordOf(field);
+  if (!found) return null;
+  return found;
+}
+
+/* What each satellite source is called on screen: "NASA HLS (Landsat and Sentinel-2) saw a crop…". */
+export const SATELLITE_SOURCE = Object.freeze({
+  hls: 'NASA HLS (Landsat and Sentinel-2)',
+  modis: 'NASA MODIS',
+});
+
+/* The one line shown for a field with an outline but no satellite record; '' when there is a
+   record, no outline, or the zone file is not loaded. A field in the zone with no record is
+   under the zone's smallest size (meta.min_acres). */
+export function satelliteGapLine(field) {
+  if (!zone || !field?.props || satelliteRecordFor(field)) return '';
+  if (inZone(field)) return `The satellite record covers fields of ${count(zone.meta.min_acres ?? 40)} acres or more.`;
+  return 'Satellite record covers fields in Adams, Lincoln and Whitman counties for now.';
 }
 
 /* A traced field this close to the outline's size is taken to be the whole field. */
@@ -400,4 +459,180 @@ export function satelliteLead(record, field) {
     return `NASA satellites saw this on ${count(record.acres)} of this field’s ${count(acres)} acres:`;
   }
   return 'NASA satellites saw this on your field:';
+}
+
+/* ---------- Map views: crop or rest, and heat, year by year ---------- */
+
+/* The years the map views step through: the years every satellite record has. */
+export const VIEW_YEARS = Object.freeze({ first: 2015, last: 2025 });
+
+/* The fields of a county (from indexFields) that have a satellite record, ready to colour by year:
+   [{ id, bounds, source, growing: Map(year -> true or false) }]. Only fields in the satellite zone
+   or holding a traced field are checked, so a whole county is quick. */
+export function recordedFields(fields) {
+  const recorded = [];
+  for (const field of fields ?? []) {
+    const maybe = Boolean(zone?.fields[String(field.id)]) || TRACED.some((traced) => boundsHold(field.bounds, traced.centre));
+    if (!maybe) continue;
+    const record = satelliteRecordFor({ id: field.id, pin: field.centre, geometry: field.feature.geometry });
+    if (!record) continue;
+    recorded.push({ id: field.id, bounds: field.bounds, source: record.source, growing: new Map(record.years.map(({ year, growing }) => [year, growing])) });
+  }
+  return recorded;
+}
+
+/* How many recorded fields grew a crop and how many rested in one year, counting only the fields
+   that touch the view when one is given. `sources` lists the satellites behind the count. */
+export function yearCounts(recorded, year, viewBounds = null) {
+  let growing = 0;
+  let resting = 0;
+  const sources = new Set();
+  for (const field of recorded) {
+    if (!field.growing.has(year)) continue;
+    if (viewBounds && !boundsTouch(field.bounds, viewBounds)) continue;
+    if (field.growing.get(year)) growing += 1;
+    else resting += 1;
+    sources.add(field.source);
+  }
+  return { growing, resting, sources: [...sources].sort() };
+}
+
+/* The one line over the year slider in the crop-or-rest view. */
+export function cropYearLine(year, { growing, resting, sources }) {
+  if (!growing && !resting) return `${year} · No fields here have a satellite record. It covers fields of 40 acres or more in Adams, Lincoln and Whitman counties.`;
+  const satellite = sources.includes('hls') && sources.includes('modis') ? 'NASA MODIS and HLS satellites'
+    : sources.includes('hls') ? 'NASA HLS satellites' : 'NASA MODIS satellite';
+  return `${year} · ${count(growing)} ${plural(growing, 'field', 'fields')} growing, ${count(resting)} resting · ${satellite}`;
+}
+
+/* The heat view: NASA GIBS, MODIS Terra land surface temperature by day, 8-day average.
+   Layer, tile template, times (8-day periods from 1 January, P8D) and max zoom (tile matrix set
+   GoogleMapsCompatible_Level7) are from the GIBS WMTS GetCapabilities for EPSG:3857 "best". */
+export const HEAT_LAYER = 'MODIS_Terra_L3_Land_Surface_Temp_8Day_Day';
+export const HEAT_MAX_ZOOM = 7;
+const HEAT_DAY = 193; // the 8-day period that starts on day 193: mid-July (12 July, or 11 July in a leap year)
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/* The first and last day of the mid-July 8-day period of a year, as UTC dates. */
+function heatSpan(year) {
+  const start = new Date(Date.UTC(year, 0, HEAT_DAY));
+  const end = new Date(Date.UTC(year, 0, HEAT_DAY + 7));
+  return { start, end };
+}
+
+/* The GIBS time for a year: the first day of its mid-July period, YYYY-MM-DD. */
+export function heatDate(year) {
+  return heatSpan(year).start.toISOString().slice(0, 10);
+}
+
+export function heatTiles(year) {
+  return `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${HEAT_LAYER}/default/${heatDate(year)}/GoogleMapsCompatible_Level7/{z}/{y}/{x}.png`;
+}
+
+/* NASA MODIS measures the heat in 1 km squares, so close in it is one flat colour over every
+   field. It fades out from HEAT_FADE.from and is gone at HEAT_FADE.to, where the field outlines
+   are drawn; from there each field is coloured by its own heat from NASA ECOSTRESS (below). */
+export const HEAT_FADE = Object.freeze({ from: 10, to: 10.5 });
+export const HEAT_OPACITY = 0.55;
+
+/* ---------- Field heat: NASA ECOSTRESS, one clear midsummer pass a year ----------
+
+   data/satellite-heat.json (made by tools/build_heat_ecostress.py):
+   { meta: { years: [2018, 2025], passes: { "2021": { date: "2021-07-..", ... } }, legend: [low, high] },
+     fields: { "<field id>": [°F for each year from years[0], or null] } }
+   ECOSTRESS rides the International Space Station and measures the ground in 70 m squares. The
+   app loads the file when the heat view is first opened and hands it to setFieldHeat. */
+
+let fieldHeat = null;
+
+export function setFieldHeat(data) {
+  fieldHeat = data && data.fields && Number.isInteger(data.meta?.years?.[0]) && data.meta?.passes ? data : null;
+}
+
+/* The colours a field's heat runs through, cool to hot, and the °F at each end (from the file). */
+export const FIELD_HEAT_RAMP = Object.freeze(['#fff3b0', '#ffcf5c', '#ff9a3c', '#ff5f2e', '#e3262b']);
+
+export function fieldHeatRange() {
+  const legend = fieldHeat?.meta?.legend;
+  return Array.isArray(legend) && legend.length === 2 ? { low: legend[0], high: legend[1] } : { low: 80, high: 140 };
+}
+
+/* The ECOSTRESS pass of a year as { date: Date (UTC) }, or null when there is none. */
+export function heatPass(year) {
+  const date = fieldHeat?.meta.passes[String(year)]?.date;
+  return typeof date === 'string' ? { date: new Date(`${date}T00:00:00Z`) } : null;
+}
+
+/* The fields of a county (from indexFields) the heat file has, ready to colour by year:
+   [{ id, bounds, heat: Map(year -> °F) }]. */
+export function heatedFields(fields) {
+  if (!fieldHeat) return [];
+  const first = fieldHeat.meta.years[0];
+  const out = [];
+  for (const field of fields ?? []) {
+    const row = fieldHeat.fields[String(field.id)];
+    if (!Array.isArray(row)) continue;
+    const heat = new Map();
+    row.forEach((value, index) => {
+      if (Number.isFinite(value)) heat.set(first + index, value);
+    });
+    out.push({ id: field.id, bounds: field.bounds, heat });
+  }
+  return out;
+}
+
+/* How many fields in the view have a heat reading in a year, and how many of the satellite zone's
+   fields there have none (cloud, or the pass missed them). `zoned` is recordedFields' list. */
+export function heatCounts(heated, zoned, year, viewBounds = null) {
+  const seen = new Set();
+  for (const field of heated) {
+    if (field.heat.has(year) && (!viewBounds || boundsTouch(field.bounds, viewBounds))) seen.add(field.id);
+  }
+  let missing = 0;
+  for (const field of zoned) {
+    if (!seen.has(field.id) && (!viewBounds || boundsTouch(field.bounds, viewBounds))) missing += 1;
+  }
+  return { seen: seen.size, missing };
+}
+
+/* True when this zoom shows each field's own heat rather than the 1 km squares. */
+export function fieldHeatShown(zoom) {
+  return zoom >= HEAT_FADE.to;
+}
+
+/* The words at each end of the heat legend, for the 1 km squares or for the fields. */
+export function heatKey(zoom) {
+  if (!fieldHeatShown(zoom) || !fieldHeat) return { low: 'Cooler, 60°F', high: '135°F, hotter', fields: false };
+  const { low, high } = fieldHeatRange();
+  return { low: `Cooler, ${low}°F`, high: `${high}°F, hotter`, fields: true };
+}
+
+/* The short line under the bar in the heat view; '' when there is nothing to add. Close in, it says
+   why some fields have no colour. */
+export function heatHint(zoom, { year, missing = 0 } = {}) {
+  if (!fieldHeatShown(zoom)) return '';
+  if (!fieldHeat) return 'Zoom out to see heat. NASA MODIS measures it in 1 km squares.';
+  if (!heatPass(year)) return 'Zoom out to see NASA MODIS heat in 1 km squares.';
+  if (missing > 0) return `${count(missing)} ${plural(missing, 'field', 'fields')} here ${missing === 1 ? 'has' : 'have'} no colour: cloud, or the pass missed ${missing === 1 ? 'it' : 'them'}.`;
+  return '';
+}
+
+/* The one line over the year slider in the heat view. Zoomed out it names the MODIS 8-day average;
+   close in, the ECOSTRESS pass that coloured the fields, or that there is none that year. */
+export function heatYearLine(year, zoom = 0) {
+  if (fieldHeatShown(zoom) && fieldHeat) {
+    const pass = heatPass(year);
+    if (pass) {
+      const day = pass.date;
+      return `${MONTHS[day.getUTCMonth()]} ${day.getUTCDate()}, ${year} · Daytime ground heat · NASA ECOSTRESS on the Space Station`;
+    }
+    const first = fieldHeat.meta.years[0];
+    return year < first
+      ? `${year} · No field heat: NASA ECOSTRESS began in ${first}.`
+      : `${year} · No clear NASA ECOSTRESS pass that summer.`;
+  }
+  const { start, end } = heatSpan(year);
+  const month = MONTHS[start.getUTCMonth()];
+  return `${month} ${start.getUTCDate()}–${end.getUTCDate()}, ${year} · Daytime ground heat, 8-day average · NASA MODIS satellite`;
 }

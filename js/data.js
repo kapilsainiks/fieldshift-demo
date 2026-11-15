@@ -13,6 +13,9 @@
      places()                  data/us-places.json            { source, places: [[name, state, lat, lon, land_sq_mi], ...] }
      fieldsIndex()             data/fields-index.json         { source, counties: [{ county, file, fields, bbox }] }
      countyFields(county)      that county's field outlines (GeoJSON), or null for a county we have no file for
+     satelliteZone()           data/satellite-zone.json       { meta, fields: { id: [acres, "0110...", "h"?] } }, or null
+                               when it cannot be loaded (the traced fields still have their record)
+     satelliteHeat()           data/satellite-heat.json       { meta, fields: { id: [°F or null per year] } }, or null
      nasaClimate([lon, lat])   { data, live }: NASA POWER long-term monthly averages for the point.
                                live is false when NASA could not be reached and `data` is the saved
                                Ritzville copy (CLIM_FALLBACK). Say which one was used.
@@ -179,6 +182,14 @@ export function places() {
 
 export function fieldsIndex() {
   return requiredJson('data/fields-index.json');
+}
+
+export function satelliteZone() {
+  return once('data/satellite-zone.json', () => fetchJson('data/satellite-zone.json').catch(() => null));
+}
+
+export function satelliteHeat() {
+  return once('data/satellite-heat.json', () => fetchJson('data/satellite-heat.json').catch(() => null));
 }
 
 export async function countyFields(countyName) {

@@ -10,7 +10,7 @@
 import { state } from './state.js';
 import { addPin, createMap, fly, reducedMotion } from './map.js';
 import { announce } from './live.js';
-import { cropNeeds, places, fieldsConfig, fieldsIndex, countyFields, engineById } from './data.js';
+import { cropNeeds, places, fieldsConfig, fieldsIndex, countyFields, engineById, satelliteHeat, satelliteZone } from './data.js';
 import { count, pinText, plural, wordList, yearSpan } from './format.js';
 import { boundsAround, boundsCentre, boundsHold, geometryBounds, pointInside } from './geometry.js';
 import { cropGroups } from './growcheck.js';
@@ -32,12 +32,32 @@ import {
   rotatesWith,
   rotationFromCrops,
   rotationWords,
+  FIELD_HEAT_RAMP,
+  HEAT_FADE,
+  HEAT_MAX_ZOOM,
+  HEAT_OPACITY,
+  fieldHeatRange,
+  fieldHeatShown,
+  heatCounts,
+  heatedFields,
+  heatHint,
+  heatKey,
+  SATELLITE_SOURCE,
+  VIEW_YEARS,
+  cropYearLine,
+  heatTiles,
+  heatYearLine,
+  recordedFields,
   sampleBlurb,
+  satelliteGapLine,
   satelliteRecordFor,
   searchPlaces,
+  setFieldHeat,
+  setSatelliteZone,
   sectionQueryUrl,
   townZoom,
   waterAnswer,
+  yearCounts,
 } from './finder-util.js';
 
 const ZOOM = {
@@ -61,6 +81,9 @@ const LOOKUP_TIMEOUT_MS = 15000;
 const LOCATION_TIMEOUT_MS = 10000;
 const MAP_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_']);
 const HONEY = '#ffdfb5';
+const GREW = '#7cc94f'; // crop or rest view: a crop was growing (also the darker of the two)
+const RESTED = '#e8c98f'; // and resting: a light, muted ochre
+const PLAY_MS = 1000; // one year a second
 
 const ROTATION_WORDS = { wf: 'Wheat, then rest', ww: 'Wheat every year', other: 'Something else' };
 const WATER_WORDS = { Dryland: 'Dryland, rain only', Irrigated: 'Irrigated' };
@@ -89,7 +112,7 @@ const LOCATION_ERRORS = {
 const ARROW = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
 const TEMPLATE = `
-<div class="fa" id="fa" data-stage="start" data-mode="town">
+<div class="fa" id="fa" data-stage="start" data-mode="town" data-view="map">
   <div class="shade shade-start" aria-hidden="true"></div>
   <div class="shade shade-low" aria-hidden="true"></div>
   <div class="shade shade-side" aria-hidden="true"></div>
@@ -159,9 +182,30 @@ const TEMPLATE = `
       <button type="button" id="zoom-out" aria-label="Zoom out"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
       <button type="button" id="zoom-in" aria-label="Zoom in"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg></button>
     </div>
+    <div class="views glass" role="group" aria-label="Map view" id="views">
+      <button type="button" data-show="map" aria-pressed="true">Map</button>
+      <button type="button" data-show="crop" aria-pressed="false">Crop or rest</button>
+      <button type="button" data-show="heat" aria-pressed="false">Heat</button>
+    </div>
   </div>
 
   <div class="lower" id="lower">
+    <section class="mvbar glass piece off" id="mvbar" aria-label="Year on the map">
+      <div class="mv-top">
+        <p class="mv-line" id="mv-line" aria-live="polite"></p>
+        <p class="mv-key" id="mv-key-crop"><span><i class="sw grew" aria-hidden="true"></i>Crop growing</span><span><i class="sw rested" aria-hidden="true"></i>Resting</span></p>
+        <p class="mv-key" id="mv-key-heat" hidden><span id="heat-low">Cooler, 60°F</span><i class="ramp" aria-hidden="true"></i><span id="heat-high">135°F, hotter</span></p>
+      </div>
+      <p class="mv-hint" id="mv-hint" aria-live="polite"></p>
+      <div class="mv-row">
+        <button type="button" class="mv-play" id="mv-play" aria-label="Play the years"></button>
+        <label class="visually-hidden" for="mv-year">Year</label>
+        <span class="mv-end" aria-hidden="true">${VIEW_YEARS.first}</span>
+        <input type="range" id="mv-year" min="${VIEW_YEARS.first}" max="${VIEW_YEARS.last}" step="1" value="${VIEW_YEARS.last}">
+        <span class="mv-end" aria-hidden="true">${VIEW_YEARS.last}</span>
+      </div>
+    </section>
+
     <section class="banner piece off" id="banner" aria-labelledby="banner-title">
       <p class="eyebrow" id="banner-eyebrow"></p>
       <h1 id="banner-title" tabindex="-1"></h1>
@@ -323,6 +367,11 @@ function newScreen(container) {
     stopWatching: null,
     onResize: null,
     resizeTimer: 0,
+    view: 'map', // the map view: map, crop (crop or rest) or heat
+    year: VIEW_YEARS.last,
+    playTimer: 0,
+    heatYear: 0,
+    barWatch: null,
   };
 }
 
@@ -461,6 +510,19 @@ async function loadIndex() {
   if (screen === ui) refreshView();
 }
 
+/* The MODIS crop-or-rest record for the fields of the three counties. When it lands after a field was
+   picked, the Found words are written again so they show it. */
+async function loadSatelliteZone() {
+  const screen = ui;
+  setSatelliteZone(await satelliteZone());
+  if (screen !== ui) return;
+  for (const record of ui.counties.values()) record.recorded = null;
+  paintView();
+  if (ui.view === 'crop') writeYearLine(false);
+  if (ui.stage === 'found' && state.field) setBanner(foundCopy(state.field), true);
+  showCredit();
+}
+
 function indexedFields(collection) {
   if (!fieldIndexCache.has(collection)) fieldIndexCache.set(collection, indexFields(collection));
   return fieldIndexCache.get(collection);
@@ -577,6 +639,12 @@ function onStyleLoad() {
   const empty = { type: 'FeatureCollection', features: [] };
   map.addSource('plss', { type: 'raster', tileSize: 256, tiles: [SURVEY_GRID_TILES] });
   map.addLayer({ id: 'plss', type: 'raster', source: 'plss', minzoom: 11, layout: { visibility: 'none' }, paint: { 'raster-opacity': 0.35 } });
+  // Heat view: NASA land surface temperature, under the field outlines. Hidden, it loads nothing.
+  map.addSource('heat', { type: 'raster', tileSize: 256, maxzoom: HEAT_MAX_ZOOM, tiles: [heatTiles(ui.year)] });
+  // Close in, a 1 km square is one flat colour over every field: the heat fades out (heatHint).
+  const heatOpacity = ['interpolate', ['linear'], ['zoom'], HEAT_FADE.from, HEAT_OPACITY, HEAT_FADE.to, 0];
+  map.addLayer({ id: 'heat', type: 'raster', source: 'heat', layout: { visibility: 'none' }, paint: { 'raster-opacity': heatOpacity, 'raster-fade-duration': 0, 'raster-resampling': 'nearest' } });
+  ui.heatYear = ui.year;
   // The ground around the picked field goes a little darker, so the field stands out.
   map.addSource('mask', { type: 'geojson', data: empty });
   map.addLayer({ id: 'mask', type: 'fill', source: 'mask', paint: { 'fill-color': '#000', 'fill-opacity': ['interpolate', ['linear'], ['zoom'], 10.5, 0, 12, 0.28] } });
@@ -618,6 +686,8 @@ function addCountyToMap(record, collection) {
     map.on('mousemove', `${source}-fill`, (event) => showHover({ source, id: event.features[0].id }, event));
     map.on('mouseleave', `${source}-fill`, () => showHover(null));
     quietOutlines();
+    paintCounty(record);
+    if (ui.view === 'heat') writeHeatHint();
   });
 }
 
@@ -763,10 +833,13 @@ function setStage(stage) {
 
   show($('hero'), stage === 'start');
   show($('topleft'), stage === 'arrived' || stage === 'found');
+  if (stage === 'start' && ui.view !== 'map') setView('map', false);
+  showViewBar();
   show($('banner'), stage !== 'start');
   show($('actions'), stage === 'arrived' && !ui.listOpen);
   show($('dock'), Boolean(dock));
   $('zoom-group').hidden = !ui.map;
+  $('views').hidden = !ui.map;
   $('open-list').setAttribute('aria-expanded', String(dock === 'list'));
   root.classList.toggle('aim', dock === 'list');
   if (dock !== 'list') root.querySelector('.crosshair').style.top = '';
@@ -790,6 +863,7 @@ function writeBanner({ eyebrow = '', title, sub = '', know = '', sat = null }) {
   $('know-crop').hidden = !know;
   $('sat').hidden = !sat;
   if (sat) {
+    $('sat-bars').hidden = !sat.years.length; // a field with no record gets one line and no bars
     $('sat-bars').replaceChildren(...sat.years.map(({ growing }) => {
       const bar = document.createElement('i');
       bar.className = growing ? 'grew' : 'rested';
@@ -882,9 +956,12 @@ function foundCopy(field) {
     const often = alternates(years) ? 'every other year' : `in ${grew} of ${years.length} years`;
     copy.sat = {
       years,
-      words: `NASA satellites saw a crop ${often}${part}, ${yearSpan(first, last)}.`,
+      words: `${SATELLITE_SOURCE[record.source]} saw a crop ${often}${part}, ${yearSpan(first, last)}.`,
       more: alternates(years) ? ' That looks like wheat, then rest.' : '',
     };
+  } else {
+    const gap = satelliteGapLine(field);
+    if (gap) copy.sat = { years: [], words: gap, more: '' };
   }
   return copy;
 }
@@ -909,7 +986,10 @@ function showCredit(v = view()) {
       text = 'Real aerial photo · USGS and USDA';
       if (v.zoom >= ZOOM.drawn && recordsInView(v, 'ready').length) text += ' · Field outlines: Washington state crop map';
       if (ui.hasSection && v.zoom >= 11) text += ' · Square mile: BLM land survey';
-      if (ui.stage === 'found' && state.field && satelliteRecordFor(state.field)) text += ' · Satellite record: NASA HLS';
+      const record = ui.stage === 'found' && state.field ? satelliteRecordFor(state.field) : null;
+      // In the heat view the heat is named instead of the crop-or-rest record, so the line stays short.
+      if (ui.view === 'heat') text += fieldHeatShown(v.zoom) && ui.heatLoaded ? ' · Heat: NASA ECOSTRESS' : ' · Heat: NASA MODIS';
+      else if (record) text += record.source === 'modis' ? ' · Satellite record: NASA MODIS' : ' · Satellite record: NASA HLS';
     }
   }
   $('credit').textContent = text;
@@ -923,6 +1003,9 @@ function refreshView() {
   for (const entry of countiesInView(v)) loadCounty(entry);
   showCredit(v);
   if (ui.stage === 'arrived') showArrived(v);
+  if (ui.view !== 'map') writeYearLine(false);
+  writeHeatHint(v);
+  writeHeatKey(v);
 }
 
 /* After a move the farmer made (or a flight that ended): which stage is this? */
@@ -1663,6 +1746,200 @@ async function fillSamples() {
   }
 }
 
+/* ---------- Map views: the map, crop or rest, heat ---------- */
+
+const HOVER = ['boolean', ['feature-state', 'hover'], false];
+const CROP = ['coalesce', ['feature-state', 'crop'], -1]; // 1 a crop grew, 0 it rested, -1 no record
+const FILL = {
+  plain: { color: '#fff', opacity: ['case', HOVER, 0.2, 0] },
+  crop: {
+    color: ['match', CROP, 1, GREW, 0, RESTED, '#fff'],
+    opacity: ['match', CROP, [0, 1], ['case', HOVER, 0.85, 0.7], ['case', HOVER, 0.2, 0]],
+  },
+};
+const HEAT = ['coalesce', ['feature-state', 'heat'], -999]; // °F on the year's ECOSTRESS pass, -999 none
+
+/* The heat view's field fill: cool to hot over the file's legend range. Fields with no reading stay clear. */
+function heatFill() {
+  const { low, high } = fieldHeatRange();
+  const stops = FIELD_HEAT_RAMP.flatMap((colour, index) => [low + ((high - low) * index) / (FIELD_HEAT_RAMP.length - 1), colour]);
+  return {
+    color: ['interpolate', ['linear'], HEAT, ...stops],
+    opacity: ['case', ['>', HEAT, -999], ['case', HOVER, 0.92, 0.85], ['case', HOVER, 0.2, 0]],
+  };
+}
+
+const PLAY_ICON = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>';
+const PAUSE_ICON = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13M16 5.5v13" stroke-width="3"/></svg>';
+
+function setView(view, speak = true) {
+  stopPlay(false);
+  ui.view = view;
+  ui.root.dataset.view = view;
+  for (const button of $('views').querySelectorAll('button')) button.setAttribute('aria-pressed', String(button.dataset.show === view));
+  $('mv-key-crop').hidden = view !== 'crop';
+  $('mv-key-heat').hidden = view !== 'heat';
+  showViewBar();
+  paintView();
+  if (view !== 'map') writeYearLine(speak);
+  writeHeatHint();
+  writeHeatKey();
+  showCredit();
+  if (view === 'heat') loadFieldHeat();
+}
+
+/* The ECOSTRESS field heat, loaded the first time the heat view opens. */
+async function loadFieldHeat() {
+  const screen = ui;
+  if (screen.heatRequested) return;
+  screen.heatRequested = true;
+  setFieldHeat(await satelliteHeat());
+  if (screen !== ui) return;
+  ui.heatLoaded = true;
+  for (const record of ui.counties.values()) {
+    record.heated = null;
+    record.painted = null;
+  }
+  paintView();
+  if (ui.view === 'heat') writeYearLine(false);
+  writeHeatHint();
+  writeHeatKey();
+  showCredit();
+}
+
+/* The two ends of the heat legend: the 1 km squares zoomed out, the fields close in. */
+function writeHeatKey(v = view()) {
+  const key = heatKey(v.zoom);
+  $('heat-low').textContent = key.low;
+  $('heat-high').textContent = key.high;
+  $('mv-key-heat').classList.toggle('fields', key.fields);
+}
+
+/* In the heat view, close in: how many fields have no colour, or to zoom out in a year with no
+   field heat. Spoken politely when it comes or goes. */
+function writeHeatHint(v = view()) {
+  let text = '';
+  if (ui.view === 'heat') {
+    const { missing } = heatCounts(
+      [...ui.counties.values()].flatMap((record) => heatedOf(record)),
+      [...ui.counties.values()].flatMap((record) => recordedOf(record)),
+      ui.year, v.bounds);
+    text = heatHint(v.zoom, { year: ui.year, missing });
+  }
+  const hint = $('mv-hint');
+  if (hint.textContent !== text) hint.textContent = text;
+}
+
+/* The year bar shows with the crop-or-rest and heat views, once the map is close in. */
+function showViewBar() {
+  const on = ui.view !== 'map' && ui.stage !== 'start';
+  show($('mvbar'), on);
+  ui.root.classList.toggle('viewing', on);
+}
+
+/* The words at the bottom left stand on the bar, however tall its line wraps. */
+function watchBar() {
+  const bar = $('mvbar');
+  ui.barWatch = new ResizeObserver(() => ui?.root.style.setProperty('--bar-h', `${bar.offsetHeight}px`));
+  ui.barWatch.observe(bar);
+}
+
+function setYear(year, speak) {
+  ui.year = Math.min(VIEW_YEARS.last, Math.max(VIEW_YEARS.first, year));
+  $('mv-year').value = String(ui.year);
+  paintView();
+  writeYearLine(speak);
+  writeHeatHint();
+}
+
+/* The line over the slider. It is spoken when the farmer changes the year, or when play stops;
+   not on every step of play, and not when the map moves. */
+function writeYearLine(speak) {
+  const line = $('mv-line');
+  line.setAttribute('aria-live', speak ? 'polite' : 'off');
+  if (ui.view === 'heat') {
+    line.textContent = heatYearLine(ui.year, view().zoom);
+    return;
+  }
+  const bounds = view().bounds;
+  const recorded = [...ui.counties.values()].flatMap((record) => recordedOf(record));
+  line.textContent = cropYearLine(ui.year, yearCounts(recorded, ui.year, bounds));
+}
+
+function recordedOf(record) {
+  if (record.status !== 'ready') return [];
+  record.recorded ??= recordedFields(record.fields);
+  return record.recorded;
+}
+
+function heatedOf(record) {
+  if (record.status !== 'ready' || !ui.heatLoaded) return [];
+  record.heated ??= heatedFields(record.fields);
+  return record.heated;
+}
+
+function paintView() {
+  whenStyleReady(() => {
+    const { map } = ui;
+    if (ui.view === 'heat' && ui.heatYear !== ui.year) {
+      map.getSource('heat').setTiles([heatTiles(ui.year)]);
+      ui.heatYear = ui.year;
+    }
+    map.setLayoutProperty('heat', 'visibility', ui.view === 'heat' ? 'visible' : 'none');
+    for (const record of ui.counties.values()) paintCounty(record);
+  });
+}
+
+/* Colour a county's fields for the crop-or-rest or heat view, or put them back. */
+function paintCounty(record) {
+  const { map } = ui;
+  if (!map || !ui.styleReady || record.status !== 'ready' || !map.getLayer(`${record.source}-fill`)) return;
+  if (ui.view === 'crop') {
+    for (const field of recordedOf(record)) {
+      const grew = field.growing.get(ui.year);
+      map.setFeatureState({ source: record.source, id: field.id }, { crop: grew === undefined ? -1 : Number(grew) });
+    }
+  }
+  const heat = ui.view === 'heat' && ui.heatLoaded;
+  if (heat) {
+    for (const field of heatedOf(record)) {
+      map.setFeatureState({ source: record.source, id: field.id }, { heat: field.heat.get(ui.year) ?? -999 });
+    }
+  }
+  const want = ui.view === 'crop' ? 'crop' : heat ? 'heat' : 'plain';
+  if ((record.painted ?? 'plain') === want) return;
+  const fill = want === 'heat' ? heatFill() : FILL[want];
+  map.setPaintProperty(`${record.source}-fill`, 'fill-color', fill.color);
+  map.setPaintProperty(`${record.source}-fill`, 'fill-opacity', fill.opacity);
+  record.painted = want;
+}
+
+function startPlay() {
+  if (ui.year >= VIEW_YEARS.last) setYear(VIEW_YEARS.first, false);
+  const screen = ui;
+  screen.playTimer = setInterval(() => {
+    if (screen !== ui) return;
+    setYear(ui.year + 1, false);
+    if (ui.year >= VIEW_YEARS.last) stopPlay(true);
+  }, PLAY_MS);
+  showPlay();
+}
+
+function stopPlay(speak) {
+  if (!ui.playTimer) return;
+  clearInterval(ui.playTimer);
+  ui.playTimer = 0;
+  showPlay();
+  if (speak) writeYearLine(true);
+}
+
+function showPlay() {
+  const play = $('mv-play');
+  const playing = Boolean(ui.playTimer);
+  play.innerHTML = playing ? PAUSE_ICON : PLAY_ICON;
+  play.setAttribute('aria-label', playing ? 'Pause' : 'Play the years');
+}
+
 /* ---------- Wiring ---------- */
 
 function onStateChange() {
@@ -1702,6 +1979,14 @@ function wire() {
   });
   $('zoom-in').addEventListener('click', () => ui.map?.easeTo({ zoom: ui.map.getZoom() + 1, duration: reducedMotion() ? 0 : 320 }));
   $('zoom-out').addEventListener('click', () => ui.map?.easeTo({ zoom: ui.map.getZoom() - 1, duration: reducedMotion() ? 0 : 320 }));
+  for (const button of $('views').querySelectorAll('button')) button.addEventListener('click', () => setView(button.dataset.show));
+  $('mv-year').addEventListener('input', () => {
+    stopPlay(false);
+    setYear(Number($('mv-year').value), true);
+  });
+  $('mv-play').addEventListener('click', () => (ui.playTimer ? stopPlay(true) : startPlay()));
+  showPlay();
+  watchBar();
   ui.onResize = () => {
     clearTimeout(ui?.resizeTimer);
     if (!ui) return;
@@ -1720,6 +2005,7 @@ export function mount(container) {
   container.innerHTML = TEMPLATE;
   ui = newScreen(container);
   ui.indexRequest = loadIndex();
+  loadSatelliteZone();
   wire();
   startMap();
   setStage('start');
@@ -1743,6 +2029,8 @@ export function unmount() {
   const screen = ui;
   ui = null;
   clearTimeout(screen.resizeTimer);
+  clearInterval(screen.playTimer);
+  screen.barWatch?.disconnect();
   window.removeEventListener('resize', screen.onResize);
   screen.stopWatching?.();
   screen.marker?.remove();

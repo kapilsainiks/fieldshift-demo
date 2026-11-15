@@ -8,14 +8,19 @@
 
 import { state } from './state.js';
 import {
-  cropNeeds, countyFields, engineFor, fieldConfigFor, fieldsConfig, fieldsIndex, nasaClimate,
+  cropNeeds, countyFields, engineFor, fieldConfigFor, fieldsConfig, fieldsIndex, futureRain, nasaClimate,
 } from './data.js';
 import { addPin, createMap, reducedMotion } from './map.js';
 import { announce } from './live.js';
-import { PRICE_RANGE, TEST_ACRES, breakEvenPrice, rank, testCost, toTodayFactor } from './engine.js';
+import {
+  PRICE_RANGE, TEST_ACRES, WEATHER_SHIFT, breakEvenPrice, rank, scenarioWeights, shiftEvidence, toTodayFactor,
+} from './engine.js';
+import { USUAL, fieldWords, heatWords, lastSeasons, rainWords, seasonsSummary } from './seasons.js';
 import { checkCrop, climateSummary, cropGroups } from './growcheck.js';
-import { count, escapeHtml, inches, money, signedPercent, wordList, yearList, yearSpan } from './format.js';
-import { rotationFromCrops } from './finder-util.js';
+import {
+  count, escapeHtml, fahrenheitChange, inches, money, signedPercent, wordList, yearList, yearSpan,
+} from './format.js';
+import { rotationFromCrops, satelliteRecordFor } from './finder-util.js';
 import { geometryBounds, pointInGeometry } from './geometry.js';
 import {
   PRICE_PERCENT_TODAY, PRIORITY_WORDS, REST_CODE, SOIL_POINTS_NOTE, YIELD_PERCENT_RANGE,
@@ -24,7 +29,7 @@ import {
   leftOutLabels, lowerName, metricWords, milesBetween, priceAtPercent, priceSourceSentence, quickCrops,
   rankPosition, restTestSentence, rotationName, rotationYears, rotationYearsShown, rowMarks, sharedRecord,
   shortAnswer, shortRecordNote, shownDollars, standingSentence, testDollars, tieFacts, verbFor, whatIfOptions,
-  yieldValueText,
+  yieldValueText, rainOutlookNote, shiftedTestCost, weatherResultLine,
 } from './plan-util.js';
 
 const WHAT_IF_STORAGE_KEY = 'fieldproof.plan.whatif';
@@ -152,6 +157,23 @@ const TEMPLATE = `
   </section>
 
   <div class="lines">
+    <section class="line" aria-labelledby="plan-seasons-q" data-el="seasons" hidden>
+      <h2 id="plan-seasons-q">What your field went through</h2>
+      <div>
+        <p class="big" data-el="seasonsbig"></p>
+        <p class="line-sub" data-el="seasonssay"></p>
+        <div class="seasons-box">
+          <ul class="season-rows" data-el="seasonrows" aria-hidden="true"></ul>
+          <p class="season-key" data-el="seasonkey" aria-hidden="true"></p>
+          <table class="seasons visually-hidden" data-el="seasonstable"></table>
+        </div>
+        <details class="quiet">
+          <summary>Where this comes from ${CHEV}</summary>
+          <p class="quiet-body" data-el="seasonssrc"></p>
+        </details>
+      </div>
+    </section>
+
     <section class="line" aria-labelledby="plan-price-q" data-el="priceline" hidden>
       <h2 id="plan-price-q" data-el="priceq"></h2>
       <div>
@@ -197,6 +219,38 @@ const TEMPLATE = `
           <summary>Where today's price comes from ${CHEV}</summary>
           <p class="quiet-body" data-el="pricesrc"></p>
         </details>
+      </div>
+    </section>
+
+    <section class="line" aria-labelledby="plan-wx-q" data-el="wxline" hidden>
+      <h2 id="plan-wx-q">What if the weather shifts?</h2>
+      <div>
+        <p class="line-sub">Drag to see which rotation holds up if springs get drier or summers hotter.
+          No harvest is invented: the real years whose weather looks like that count more.</p>
+        <div class="try">
+          <div class="try-head">
+            <label for="plan-rain">Spring rain, March to June</label>
+            <output for="plan-rain" data-el="rainout"></output>
+          </div>
+          <div class="rail plain">
+            <div class="zone" aria-hidden="true"></div>
+            <input type="range" id="plan-rain" data-el="rain" aria-describedby="plan-wx-note plan-wx-say"
+              min="${WEATHER_SHIFT.rainPct[0]}" max="${WEATHER_SHIFT.rainPct[1]}" step="${WEATHER_SHIFT.rainPct[2]}">
+          </div>
+          <p class="wx-note" id="plan-wx-note" data-el="wxnote"></p>
+          <div class="try-head">
+            <label for="plan-heat">Summer heat, June and July</label>
+            <output for="plan-heat" data-el="heatout"></output>
+          </div>
+          <div class="rail plain">
+            <div class="zone" aria-hidden="true"></div>
+            <input type="range" id="plan-heat" data-el="heat" aria-describedby="plan-wx-say"
+              min="${WEATHER_SHIFT.heatC[0]}" max="${WEATHER_SHIFT.heatC[1]}" step="${WEATHER_SHIFT.heatC[2]}">
+          </div>
+          <p class="wx-result" data-el="wxresult" aria-live="polite"></p>
+          <p class="say" id="plan-wx-say" data-el="wxsay"></p>
+          <button type="button" class="textbtn" data-el="wxreset">Back to normal weather</button>
+        </div>
       </div>
     </section>
 
@@ -334,17 +388,50 @@ function savedWhatIf(key) {
   }
 }
 
-function saveWhatIf(whatIf) {
+/* Keep a slider's values for a reload. */
+function saveForReload(storageKey, value) {
   try {
-    sessionStorage.setItem(WHAT_IF_STORAGE_KEY, JSON.stringify(whatIf));
+    sessionStorage.setItem(storageKey, JSON.stringify(value));
   } catch {
-    // Storage is full or blocked. The sliders still work; a reload puts them back.
+    // Storage is full or blocked. The sliders still work; a reload starts them over.
   }
+}
+
+function saveWhatIf(whatIf) {
+  saveForReload(WHAT_IF_STORAGE_KEY, whatIf);
 }
 
 function whatIfFor(current, key) {
   if (current.whatIf?.key !== key) current.whatIf = savedWhatIf(key);
   return current.whatIf;
+}
+
+/* ---------- the weather what-if, kept for a reload ---------- */
+
+const WEATHER_STORAGE_KEY = 'fieldproof.plan.weather';
+const NO_SHIFT = Object.freeze({ rainPct: 0, heatC: 0 });
+
+function onStep(value, [low, high, step]) {
+  return Number.isFinite(value) && value >= low && value <= high && Math.abs(value / step - Math.round(value / step)) < 1e-9;
+}
+
+function weatherShiftFor(current, fieldId) {
+  if (current.weatherShift?.fieldId === fieldId) return current.weatherShift;
+  let shift = { fieldId, ...NO_SHIFT };
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(WEATHER_STORAGE_KEY));
+    if (saved?.fieldId === fieldId && onStep(saved.rainPct, WEATHER_SHIFT.rainPct) && onStep(saved.heatC, WEATHER_SHIFT.heatC)) {
+      shift = { fieldId, rainPct: saved.rainPct, heatC: saved.heatC };
+    }
+  } catch {
+    // Nothing saved, or storage is blocked: start from normal weather.
+  }
+  current.weatherShift = shift;
+  return shift;
+}
+
+function saveWeatherShift(shift) {
+  saveForReload(WEATHER_STORAGE_KEY, shift);
 }
 
 /* ---------- the model: everything the money parts show ---------- */
@@ -369,10 +456,11 @@ function moneyModel(current, cropName) {
 
   const priority = state.answers.priority;
   const prices = state.priceView;
+  const weatherShift = weatherShiftFor(current, fieldConfig.id);
   const code = cropCodeFor(cropName, config.crop_codes);
-  const untouched = rank(app, { priority, prices });
+  const untouched = rank(app, { priority, prices, weatherShift });
   const plan = highlightPlan(untouched, code);
-  const model = { app, fieldConfig, factor, priority, prices, code, plan, cropName };
+  const model = { app, fieldConfig, factor, priority, prices, weatherShift, code, plan, cropName };
   const today = app.prices_today?.[code];
   const canTry = plan.mode === 'option' && today?.nominal > 0;
   if (!canTry) return { ...model, canTry, moved: false, overrides: NO_OVERRIDES, ranking: untouched };
@@ -380,11 +468,11 @@ function moneyModel(current, cropName) {
   const whatIf = whatIfFor(current, `${fieldConfig.id}:${code}`);
   const overrides = overridesFor(whatIf, code, today.nominal, prices);
   const moved = code in overrides.priceOverride || code in overrides.yieldFactor;
-  return { ...model, canTry, moved, today, whatIf, overrides, ranking: rank(app, { priority, prices, ...overrides }) };
+  return { ...model, canTry, moved, today, whatIf, overrides, ranking: rank(app, { priority, prices, weatherShift, ...overrides }) };
 }
 
 function rankingOptions(model) {
-  return { priority: model.priority, prices: model.prices, ...model.overrides };
+  return { priority: model.priority, prices: model.prices, weatherShift: model.weatherShift, ...model.overrides };
 }
 
 function leadOverNow(model, optionId) {
@@ -395,7 +483,7 @@ function leadOverNow(model, optionId) {
    prices, the yield slider counts), lowest first. price is null when no price in range is enough. */
 function breakEvens(model) {
   const { app, code, priority, factor, overrides } = model;
-  const opts = { priority, prices: 'today', yieldFactor: overrides.yieldFactor };
+  const opts = { priority, prices: 'today', yieldFactor: overrides.yieldFactor, weatherShift: model.weatherShift };
   return model.plan.optionIds
     .filter((id) => id !== app.current_option)
     .map((id) => {
@@ -797,7 +885,8 @@ function renderMoney(current, model) {
   els.moneyh.textContent = answerFirst({ ...model, checked: checkedFacts(model) });
   const caution = leaderCaution(model);
   const bars = barsHtml(model, caution);
-  els.dockcap.textContent = `Dollars per acre, per year, at today's money.${bars.reordered ? '' : ` ${SORTED_BY[model.priority]}`}`;
+  els.dockcap.textContent = [`Dollars per acre, per year, at today's money.${bars.reordered ? '' : ` ${SORTED_BY[model.priority]}`}`, shiftNote(model)]
+    .filter(Boolean).join(' ');
   els.bars.innerHTML = bars.html;
   els.axis.style.setProperty('--zero', (bars.zero / 100).toFixed(4));
   els.axisloss.hidden = !(bars.low < 0);
@@ -879,7 +968,7 @@ function compareMoreItems(compared) {
       + 'A dry year is the 1 year in 5 at the low end.'];
   const paper = compared.rows.filter((row) => row.money?.onPaper).map((row) => lowerName(row.name));
   if (paper.length) {
-    items.push(`Harvests for ${wordList(paper)} are Washington averages, not local ones. Your field may do better or worse, so test small first.`);
+    items.push(`Harvests for ${wordList(paper)} are Washington averages, not local ones. Your field may do better or worse, so check your own harvests first.`);
   }
   const none = compared.rows.filter((row) => !row.money).map((row) => lowerName(row.name));
   if (none.length && compared.usable) {
@@ -901,7 +990,7 @@ function renderCompare(current, picks, model) {
   // The same button as with one crop, for the pick that does best (rows come best first).
   const best = ready ? compared.rows.find((row) => row.canTest) : null;
   els.sub.textContent = best
-    ? `Each crop in its best rotation, next to what you grow now. Pick one to see its ${TEST_ACRES}-acre test.`
+    ? `Each crop in its best rotation, next to what you grow now.`
     : 'Each crop in its best rotation, next to what you grow now.';
   current.testCrop = best?.name ?? null;
   els.totest.textContent = best ? `See the ${TEST_ACRES}-acre test for ${lowerName(best.name)}` : `See the ${TEST_ACRES}-acre test`;
@@ -910,7 +999,7 @@ function renderCompare(current, picks, model) {
   els.dockfoot.hidden = !compared.usable;
   els.allrows.hidden = true;
   els.moneyh.textContent = compared.usable ? 'Your picks, side by side' : noMoneySentence(current);
-  els.dockcap.textContent = compared.usable ? 'Dollars an acre, a year, at today\'s money.' : '';
+  els.dockcap.textContent = compared.usable ? ['Dollars an acre, a year, at today\'s money.', shiftNote(model)].filter(Boolean).join(' ') : '';
   const drawn = compareHtml(compared);
   els.bars.setAttribute('aria-label', 'Your crops compared');
   els.bars.innerHTML = drawn.html;
@@ -1085,7 +1174,7 @@ function shortRecordNotes(model) {
 function tableNotes(model) {
   const { app, ranking, fieldConfig } = model;
   const now = app.options[app.current_option];
-  const notes = [`Today's prices are USDA's ${app.prices_today_span} averages.`];
+  const notes = [`Today's prices are USDA's ${app.prices_today_span} averages.`, shiftNote(model)];
   if (now) {
     notes.push(currentRotationNote(rotationName(app, app.current_option), state.answers.rotation, rotationFromCrops(now.crops)));
   }
@@ -1184,7 +1273,7 @@ function renderTest(current, model, check) {
   els.acrebar.setAttribute('aria-label', `A line for your whole field. Two short marks at one end are the test: `
     + `${TEST_ACRES} acres of ${name} and ${TEST_ACRES} acres of ${baseline}.`);
 
-  const cost = testCost(app, code, fieldConfig.baseline_crop, overrides);
+  const cost = shiftedTestCost(app, code, fieldConfig.baseline_crop, overrides, model.weatherShift);
   const amounts = testDollars(cost, factor);
   if (!amounts) {
     els.testbody.innerHTML = '<p class="test-sub">The harvest or price record for this pair of crops is missing, so we can\'t say what the test costs.</p>';
@@ -1200,7 +1289,7 @@ function renderTest(current, model, check) {
       + `${code in overrides.priceOverride ? ', at the price you set' : ''}:`;
   const restsNow = app.options[app.current_option]?.crops.includes(REST_CODE);
   const rest = restsNow && fieldConfig.baseline_crop !== REST_CODE && app.crops[REST_CODE]
-    ? restTestSentence({ cost: testCost(app, code, REST_CODE, overrides), factor, cropName }) : null;
+    ? restTestSentence({ cost: shiftedTestCost(app, code, REST_CODE, overrides, model.weatherShift), factor, cropName }) : null;
   const math = (gains
     ? `Each number is what ${TEST_ACRES} acres of ${name} earn, less what ${TEST_ACRES} acres of ${baseline} earn, in the same year`
     : `Each number is what ${TEST_ACRES} acres of ${baseline} earn, less what ${TEST_ACRES} acres of ${name} earn, in the same year`)
@@ -1209,6 +1298,7 @@ function renderTest(current, model, check) {
     + `Costs: ${fieldConfig.cost_source}.`;
   els.testbody.innerHTML = `<p class="test-sub">${sub}</p>
     ${testNumbersHtml(amounts, cropName, baselineName)}
+    ${shiftNote(model) ? `<p class="test-sub test-shift">${escapeHtml(shiftNote(model))}</p>` : ''}
     <details class="quiet">
       <summary>Show the math ${CHEV}</summary>
       <div class="quiet-body"><p>${escapeHtml(math)}</p>${rest ? `<p>${escapeHtml(rest)}</p>` : ''}</div>
@@ -1217,6 +1307,154 @@ function renderTest(current, model, check) {
 
 function stateAverageCodes(app, optionId) {
   return app.options?.[optionId]?.yield_basis?.state_average ?? [];
+}
+
+/* ---------- what the field went through ---------- */
+
+/* The rain bar runs from no rain to SEASON_SCALE times normal; the line marks normal. */
+const SEASON_SCALE = 1.5;
+
+/* "13% below" / "9% above" / "usual": the short label by the rain bar. */
+function rainShort(row) {
+  if (Math.abs(row.rainVsNormalPct) < USUAL.rainPct) return 'usual';
+  const pct = Math.round(row.rainVsNormalPct);
+  return `${Math.abs(pct)}% ${pct < 0 ? 'below' : 'above'}`;
+}
+
+/* One season as a picture: year, crop or rest, spring rain against normal. Hidden from screen
+   readers: the table next to it says the same in full. */
+function seasonRowHtml(row, showField) {
+  const share = Math.max(0, 1 + row.rainVsNormalPct / 100);
+  const width = Math.min(100, share / SEASON_SCALE * 100).toFixed(1);
+  const field = fieldWords(row);
+  const chip = showField
+    ? `<span class="season-chip${row.growing ? '' : ' is-rest'}">${escapeHtml(field ?? 'no record')}</span>` : '';
+  const tag = row.dry ? 'hot, dry year' : row.heatVsNormalC >= USUAL.heatC ? 'hot summer' : '';
+  return `<li class="season-row">
+      <span class="season-year">${row.year}</span>${chip}
+      <span class="season-rain"><span class="season-track"><i style="width:${width}%"></i>`
+    + `<b style="left:${(100 / SEASON_SCALE).toFixed(1)}%"></b></span>`
+    + `<span class="season-pct${row.rainVsNormalPct <= -USUAL.rainPct ? ' is-dry' : ''}">${escapeHtml(rainShort(row))}</span></span>
+      ${tag ? `<span class="season-tag">${tag}</span>` : ''}
+    </li>`;
+}
+
+function renderSeasons(current) {
+  const { els } = current;
+  const { app, fieldConfig } = current.data ?? {};
+  const record = state.field ? satelliteRecordFor(state.field) : null;
+  const rows = app ? lastSeasons(app, record) : [];
+  els.seasons.hidden = !rows.length;
+  if (!rows.length) return;
+  const showField = rows.some((row) => row.growing !== null);
+  els.seasonsbig.textContent = yearSpan(rows[0].year, rows.at(-1).year);
+  els.seasonssay.textContent = seasonsSummary(rows);
+  els.seasonrows.innerHTML = rows.map((row) => seasonRowHtml(row, showField)).join('');
+  els.seasonkey.innerHTML = `<i></i>Line: normal spring rain, the ${yearSpan(app.weather[0].year, app.weather.at(-1).year)} average`;
+  els.seasonstable.innerHTML = `
+    <caption>Each season next to this place's normal (the ${yearSpan(app.weather[0].year, app.weather.at(-1).year)} average).</caption>
+    <thead><tr><th scope="col">Season</th>${showField ? '<th scope="col">Field, seen from space</th>' : ''}<th scope="col">Spring rain</th><th scope="col">Summer heat</th></tr></thead>
+    <tbody>${rows.map((row) => `<tr><th scope="row">${row.year}${row.dry ? ' <span class="dim">a hot, dry year</span>' : ''}</th>${
+      showField ? `<td>${escapeHtml(fieldWords(row) ?? 'no record')}</td>` : ''}<td>${escapeHtml(rainWords(row))}</td><td>${escapeHtml(heatWords(row))}</td></tr>`).join('')}</tbody>`;
+  const ownSample = state.field?.sampleId === fieldConfig?.id;
+  const place = fieldConfig?.town ? `the ${fieldConfig.town} sample farm` : 'the sample farm';
+  const heatLabel = app.hot_dry_signal?.heat_label ?? 'the June and July high';
+  const lines = [
+    `Weather: NASA POWER (MERRA-2) for the grid square around ${place}${ownSample ? '' : ', not this field’s own'}. Summer heat is ${heatLabel}.`,
+    showField
+      ? 'Field: NASA HLS satellite greenness (Landsat and Sentinel-2): a crop when the field turned green that season, rest when it did not.'
+      : 'No satellite record of this field’s crops yet.',
+    `${rows.at(-1).year + 1} is not in the record yet.`,
+  ];
+  els.seasonssrc.textContent = lines.join(' ');
+}
+
+/* ---------- the weather what-if ---------- */
+
+function shiftWords(shift) {
+  const rain = shift.rainPct === 0 ? 'usual rain' : `${Math.abs(shift.rainPct)}% ${shift.rainPct < 0 ? 'less' : 'more'} spring rain`;
+  const heat = shift.heatC === 0 ? 'usual heat' : `summers ${fahrenheitChange(shift.heatC)} hotter`;
+  return `${rain}, ${heat}`;
+}
+
+/* Under every money figure while a weather shift is on, so no shifted number goes unlabelled.
+   '' with no shift. */
+function shiftNote(model) {
+  const shift = model?.weatherShift;
+  if (!shift || (shift.rainPct === 0 && shift.heatC === 0)) return '';
+  const words = shiftWords(shift);
+  return `Weather what-if on (${words}): the real years that look like that count more. Normal and dry years are for that weather.`;
+}
+
+function renderWeatherWhatIf(current, model) {
+  const { els } = current;
+  els.wxline.hidden = !model;
+  if (!model) return null;
+  const shift = model.weatherShift;
+  els.rain.value = String(shift.rainPct);
+  els.heat.value = String(shift.heatC);
+  els.rainout.textContent = shift.rainPct === 0 ? 'As usual' : signedPercent(shift.rainPct);
+  els.heatout.textContent = shift.heatC === 0 ? 'As usual' : `+${fahrenheitChange(shift.heatC)}`;
+  els.rain.setAttribute('aria-valuetext', els.rainout.textContent);
+  els.heat.setAttribute('aria-valuetext', els.heatout.textContent);
+  els.wxreset.hidden = shift.rainPct === 0 && shift.heatC === 0;
+  els.wxnote.textContent = rainNoteFor(current, model);
+  els.wxresult.textContent = weatherResult(model);
+  const { app } = model;
+  const weights = scenarioWeights(app, shift.rainPct, shift.heatC);
+  if (!weights) {
+    els.wxsay.textContent = `Using the weather of ${yearSpan(app.years[0], app.years.at(-1))} as it was.`;
+    return els.wxsay.textContent;
+  }
+  const evidence = shiftEvidence(weights, app.years);
+  const parts = [];
+  if (evidence.evidenceYears < WEATHER_SHIFT.minEvidenceYears) {
+    parts.push(`Beyond what ${app.years.length} years have shown: treat this as a guess.`);
+  }
+  parts.push(`This leans most on ${yearList(evidence.leansOn)}: about ${(Math.round(evidence.evidenceYears * 10) / 10).toFixed(1)} years’ worth of evidence out of ${app.years.length}.`);
+  els.wxsay.textContent = parts.join(' ');
+  return els.wxsay.textContent;
+}
+
+/* The honest line by the rain slider, from NASA's climate-model file. */
+function rainNoteFor(current, model) {
+  const { fieldConfig } = model;
+  const ownSample = state.field?.sampleId === fieldConfig.id;
+  const place = ownSample || !fieldConfig.town ? 'here' : `around the ${fieldConfig.town.replace(/,.*$/, '')} sample farm`;
+  return rainOutlookNote(current.data.futureRain, fieldConfig.id, place);
+}
+
+/* The live line under the sliders: the panel's own ranking, and the checked crop's break-even. */
+function weatherResult(model) {
+  const shift = model.weatherShift;
+  const shifted = shift.rainPct !== 0 || shift.heatC !== 0;
+  const untouchedTopId = shifted
+    ? rank(model.app, { ...rankingOptions(model), weatherShift: NO_SHIFT }).ranked[0]?.option_id ?? null : null;
+  let breakEven = null;
+  if (model.canTry) {
+    const first = breakEvens(model).find((entry) => entry.price !== null);
+    breakEven = { price: first ? first.price : null, unit: model.today.unit };
+  }
+  return weatherResultLine({ ranking: model.ranking, shifted, untouchedTopId, cropName: model.cropName, breakEven });
+}
+
+function onWeatherInput(current) {
+  const shift = current.weatherShift;
+  if (!shift) return;
+  shift.rainPct = Number(current.els.rain.value);
+  shift.heatC = Number(current.els.heat.value);
+  saveWeatherShift(shift);
+  // The line under the sliders is a polite live region: it says the new result.
+  render(current);
+}
+
+function onWeatherReset(current) {
+  const shift = current.weatherShift;
+  if (!shift) return;
+  Object.assign(shift, NO_SHIFT);
+  saveWeatherShift(shift);
+  render(current);
+  current.els.rain.focus();
 }
 
 /* ---------- drawing it all ---------- */
@@ -1240,13 +1478,15 @@ function render(current) {
     renderMoney(current, model);
   }
   current.comparing = picks.length > 1;
+  renderSeasons(current);
   renderPriceLine(current, model);
+  const weatherSay = renderWeatherWhatIf(current, model);
   renderGrow(current, crop, check);
   renderRotation(current, model);
   renderSources(current, model);
   renderTest(current, model, check);
   fitSoon(current);
-  return { crop, model, answer, compare };
+  return { crop, model, answer, compare, weatherSay };
 }
 
 function cropAnnouncement({ crop, answer, model }) {
@@ -1366,6 +1606,9 @@ function wireEvents(current) {
   els.price.addEventListener('input', () => onSliderInput(current));
   els.yield.addEventListener('input', () => onSliderInput(current));
   els.reset.addEventListener('click', () => onReset(current));
+  els.rain.addEventListener('input', () => onWeatherInput(current));
+  els.heat.addEventListener('input', () => onWeatherInput(current));
+  els.wxreset.addEventListener('click', () => onWeatherReset(current));
   els.retry.addEventListener('click', () => window.location.reload());
   els.totest.addEventListener('click', (event) => {
     event.preventDefault();
@@ -1652,6 +1895,14 @@ async function loadCropNeeds() {
   }
 }
 
+async function loadFutureRain() {
+  try {
+    return await futureRain();
+  } catch {
+    return null;
+  }
+}
+
 async function loadInsideCropMap(field) {
   try {
     return insideCropMap(field, (await fieldsIndex()).counties);
@@ -1685,9 +1936,10 @@ function showLoadProblem(current) {
 
 async function loadData(current) {
   const field = state.field;
-  const [needs, moneyData, inside] = await Promise.all([loadCropNeeds(), loadMoney(field.county), loadInsideCropMap(field)]);
+  const [needs, moneyData, inside, future] = await Promise.all([
+    loadCropNeeds(), loadMoney(field.county), loadInsideCropMap(field), loadFutureRain()]);
   if (view !== current) return;
-  current.data = { needs, ...moneyData, insideCropMap: inside, weather: null };
+  current.data = { needs, ...moneyData, insideCropMap: inside, weather: null, futureRain: future };
   if (!needs) {
     showLoadProblem(current);
     return;

@@ -16,6 +16,10 @@
      pulseCut       0 to 50: how far below average this farm's pulse yields run, in percent
      priceOverride  { cropCode: nominalPrice }, used only when prices is 'today'
      yieldFactor    { cropCode: f }, multiplies that crop's yield by (1 + f) in both price views
+     weatherShift   { rainPct, heatC }: a weather what-if. Spring rain (March to June) this many
+                    percent above or below 2005-2025, June-July peak heat this many °C above. It
+                    never invents a harvest: it gives more weight to the real years whose weather
+                    looks like the shift (see scenarioWeights). { 0, 0 } is no shift.
 
    Missing data never turns into NaN. A year is skipped when any crop of the option has no harvest or
    price for it. An option with no usable years is left out of the ranking, and the single-option
@@ -29,6 +33,15 @@ export const TEST_ACRES = 12;
 
 /** The price range breakEvenPrice searches, as multiples of today's price. The price slider uses it too. */
 export const PRICE_RANGE = Object.freeze({ low: 0.4, high: 2.5 });
+
+/** The weather what-if sliders: [min, max, step]. minEvidenceYears: below this many years' worth
+    of weight the shift is beyond what the record has shown, because one or two years decide it.
+    Same values as SCENARIO in fieldshift/config.py on the varun/p0-features branch. */
+export const WEATHER_SHIFT = Object.freeze({
+  rainPct: Object.freeze([-40, 10, 5]),
+  heatC: Object.freeze([0, 3, 0.5]),
+  minEvidenceYears: 6,
+});
 
 const PRIORITIES = ['steady', 'typical', 'soil'];
 const PRICE_VIEWS = ['hist', 'today'];
@@ -98,6 +111,7 @@ function withDefaults(opts = {}) {
     pulseCut: opts.pulseCut ?? 0,
     priceOverride: opts.priceOverride ?? {},
     yieldFactor: opts.yieldFactor ?? {},
+    weatherShift: { rainPct: opts.weatherShift?.rainPct ?? 0, heatC: opts.weatherShift?.heatC ?? 0 },
   };
   if (!PRIORITIES.includes(settings.priority)) throw new RangeError(`Unknown priority "${settings.priority}"`);
   if (!PRICE_VIEWS.includes(settings.prices)) throw new RangeError(`Unknown price view "${settings.prices}"`);
@@ -174,6 +188,53 @@ function incomesFor(app, optionId, settings) {
   return incomes;
 }
 
+/** The weight of each real year under a weather shift, summing to 1: { year: weight }. Null when
+    there is no shift or the engine file has no usable weather. Port of scenario_weights in
+    fieldshift/recommend.py on the varun/p0-features branch: fit a two-variable normal to the
+    years' spring rain and June-July heat, then tilt it (exponential tilting) so its mean moves by
+    the shift. Years that look like the shift count more; no harvest is invented.
+    The fit uses every year in app.weather, not app.years, so a file cut down to fewer years
+    (plan-util.js sharedRecord) keeps the same tilt as the full ranking. In both engine files the
+    two lists are the same 2005-2025 years, so this matches the Python. */
+export function scenarioWeights(app, rainPct = 0, heatC = 0) {
+  if (!rainPct && !heatC) return null;
+  const byYear = new Map((app.weather ?? []).map((row) => [row.year, row]));
+  const years = [...byYear.keys()].sort((a, b) => a - b).filter((year) =>
+    Number.isFinite(byYear.get(year)?.rain_spring_mm) && Number.isFinite(byYear.get(year)?.heat_junjul_c));
+  if (years.length < 3) return null;
+  const points = years.map((year) => [byYear.get(year).rain_spring_mm, byYear.get(year).heat_junjul_c]);
+  const n = points.length;
+  const meanRain = points.reduce((sum, [r]) => sum + r, 0) / n;
+  const meanHeat = points.reduce((sum, [, h]) => sum + h, 0) / n;
+  const covariance = (f) => points.reduce((sum, point) => sum + f(point), 0) / (n - 1);
+  const srr = covariance(([r]) => (r - meanRain) ** 2);
+  const shh = covariance(([, h]) => (h - meanHeat) ** 2);
+  const srh = covariance(([r, h]) => (r - meanRain) * (h - meanHeat));
+  const det = srr * shh - srh * srh;
+  if (!(det > 0)) return null;
+  const dRain = (meanRain * rainPct) / 100;
+  const dHeat = heatC;
+  // inverse covariance times the shift of the mean
+  const aRain = (shh * dRain - srh * dHeat) / det;
+  const aHeat = (srr * dHeat - srh * dRain) / det;
+  const logWeights = points.map(([r, h]) => (r - meanRain) * aRain + (h - meanHeat) * aHeat);
+  const top = Math.max(...logWeights);
+  const raw = logWeights.map((v) => Math.exp(v - top));
+  const total = raw.reduce((sum, w) => sum + w, 0);
+  return Object.fromEntries(years.map((year, i) => [year, raw[i] / total]));
+}
+
+/** How many years' worth of evidence a set of weights holds (effective sample size, 1 / sum w²),
+    and the three years it leans on most. */
+export function shiftEvidence(weights, years) {
+  const usable = years.filter((year) => weights[year] > 0);
+  const own = usable.reduce((sum, year) => sum + weights[year], 0);
+  if (!(own > 0)) return { evidenceYears: 0, leansOn: [] };
+  const evidenceYears = 1 / usable.reduce((sum, year) => sum + (weights[year] / own) ** 2, 0);
+  const leansOn = [...usable].sort((a, b) => weights[b] - weights[a]).slice(0, 3);
+  return { evidenceYears, leansOn };
+}
+
 function statsFor(app, optionId, settings) {
   const incomes = incomesFor(app, optionId, settings);
   if (!incomes.length) return null;
@@ -182,6 +243,24 @@ function statsFor(app, optionId, settings) {
   const p = app.bad_year_percentile;
   if (!(p > 0 && p <= 1)) return null;
   const values = incomes.map(([, income]) => income);
+  const { rainPct, heatC } = settings.weatherShift;
+  const shift = scenarioWeights(app, rainPct, heatC);
+  if (shift) {
+    const shifted = incomes.filter(([year]) => shift[year] > 0);
+    if (shifted.length) {
+      const evidence = shiftEvidence(shift, shifted.map(([year]) => year));
+      return {
+        typical: weightedPercentile(shifted.map(([year, income]) => [income, shift[year]]), 0.5),
+        bad_year: badYear(values, p),
+        worst: Math.min(...values),
+        bad_year_climate: weightedPercentile(
+          shifted.map(([year, income]) => [income, app.climate_weights[String(year)] * shift[year]]), p),
+        years: [incomes[0][0], incomes.at(-1)[0]],
+        evidence_years: evidence.evidenceYears,
+        leans_on: evidence.leansOn,
+      };
+    }
+  }
   return {
     typical: median(values),
     bad_year: badYear(values, p),
@@ -206,6 +285,7 @@ function rankedRow(app, optionId, settings) {
     worst: roundToTenth(stats.worst),
     bad_year_climate: roundToTenth(stats.bad_year_climate),
     years: stats.years,
+    ...(stats.evidence_years != null && { evidence_years: roundToTenth(stats.evidence_years) }),
   };
 }
 
@@ -311,6 +391,10 @@ export function breakEvenPrice(app, optionId, cropCode, opts) {
       bad      the 1-in-5 costly year: the bad-year rule (app.bad_year_percentile) from the high end of d.
       fail     median margin(baseline) + the new crop's cost: the new crop is sown and brings in nothing.
       years    [first, last] year used.
+    With a weatherShift the same three numbers are weighted the way rank() weights a rotation:
+    the real years whose weather looks like the shift count more (scenarioWeights). typical and
+    fail become weighted medians, bad the weighted 1-in-5 from the high end. No shift gives
+    exactly the numbers above.
     Returns null when a crop is unknown, a price is missing or the crops share no years. */
 export function testCost(app, cropCode, baselineCropCode, opts) {
   const settings = { ...withDefaults(opts), prices: 'today' };
@@ -328,6 +412,19 @@ export function testCost(app, cropCode, baselineCropCode, opts) {
   }
   const p = app.bad_year_percentile;
   if (!years.length || !(p > 0 && p <= 1)) return null;
+  const { rainPct, heatC } = settings.weatherShift;
+  const shift = scenarioWeights(app, rainPct, heatC);
+  const kept = shift ? years.map((year, i) => [year, i]).filter(([year]) => shift[year] > 0) : [];
+  if (kept.length) {
+    const weighted = (values) => kept.map(([year, i]) => [values[i], shift[year]]);
+    return {
+      typical: weightedPercentile(weighted(givenUp), 0.5),
+      // the costly 1-in-5 from the high end: the same rule on the values turned around
+      bad: -weightedPercentile(weighted(givenUp.map((d) => -d)), p),
+      fail: weightedPercentile(weighted(baselineMargins), 0.5) + app.crops[cropCode].cost,
+      years: [years[0], years.at(-1)],
+    };
+  }
   return {
     typical: median(givenUp),
     bad: badYearFromHighEnd(givenUp, p),

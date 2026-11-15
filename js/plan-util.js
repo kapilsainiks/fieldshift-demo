@@ -8,7 +8,7 @@
      factor    engine.toTodayFactor(app): engine dollars times this are today's dollars
      code      an engine crop code ('WW', 'P', ...) */
 
-import { TEST_ACRES, TIE_DOLLARS, metricKey, optionIncomes, optionLabel, rank } from './engine.js';
+import { TEST_ACRES, TIE_DOLLARS, metricKey, optionIncomes, optionLabel, rank, testCost } from './engine.js';
 import { localCounts } from './growcheck.js';
 import {
   NO_DATA, centsPerPound, count, wordList, fahrenheit, inches, isNumber, money, moneyWithLoss, monthName, monthRange,
@@ -534,6 +534,16 @@ export function testDollars(cost, factor) {
   return amounts && Object.values(amounts).every((amount) => amount !== null) ? amounts : null;
 }
 
+/** engine.testCost() for the test, with the price and yield what-ifs in `overrides` and the active
+    weather what-if, the same way the ranking and the break-even price get it. A missing or zero
+    shift gives exactly testCost(app, cropCode, baselineCode, overrides). */
+export function shiftedTestCost(app, cropCode, baselineCode, overrides = {}, weatherShift = null) {
+  const shifted = weatherShift && (weatherShift.rainPct || weatherShift.heatC);
+  return testCost(app, cropCode, baselineCode, shifted
+    ? { ...overrides, weatherShift: { rainPct: weatherShift.rainPct ?? 0, heatC: weatherShift.heatC ?? 0 } }
+    : overrides);
+}
+
 /** The three sentences of the smallest safe test. `cost` is engine.testCost() (dollars per acre, in
     engine dollars). Returns { typical, bad, fail } as text, or null when a number is missing. */
 export function testSentences({ cost, factor, cropName, baselineName }) {
@@ -1018,4 +1028,53 @@ export function compareAnswer(rows) {
     if (names.length) clauses.push(kindClause(kind, names, false));
   }
   return `Of your picks, ${clauses.join('; ')}.`;
+}
+
+/* ---------- the weather what-if ---------- */
+
+/** The short line under the weather sliders, built from the panel's own ranking:
+    "With this weather: “wheat, then rest” still comes out ahead. Canola needs $24.10 a bushel to
+    match what you grow now." `untouchedTopId` is the top option with no weather shift, so "still"
+    is only said when the shift did not change the top. `breakEven` is { price, unit } for the
+    checked crop, { price: null } when no price in range is enough, or null to leave it out. */
+export function weatherResultLine({ ranking, shifted, untouchedTopId = null, cropName = '', breakEven = null }) {
+  const lead = shifted ? 'With this weather' : 'With usual weather';
+  const [top, second] = ranking?.ranked ?? [];
+  if (!top) return '';
+  const name = (row) => `“${optionLabel(row.label)}”`;
+  const parts = [];
+  if (second && ranking.tie) {
+    parts.push(`${lead}: ${name(top)} and ${name(second)} are too close to call.`);
+  } else {
+    const still = shifted && untouchedTopId === top.option_id ? 'still ' : '';
+    parts.push(`${lead}: ${name(top)} ${still}comes out ahead.`);
+  }
+  if (breakEven && cropName) {
+    if (isNumber(breakEven.price)) {
+      const per = breakEven.unit === 'cwt' ? 'per 100 lb' : breakEven.unit === 'bu' ? 'a bushel' : `a ${breakEven.unit}`;
+      parts.push(`${cropName} ${verbFor(cropName, 'needs', 'need')} $${breakEven.price.toFixed(2)} ${per} to match what you grow now.`);
+    } else {
+      parts.push(`No ${lowerName(cropName)} price we tried matches what you grow now.`);
+    }
+  }
+  return parts.join(' ');
+}
+
+/** The plain what-if sentence, used alone when the climate-model file has nothing to say. */
+export const WHAT_IF_NOT_FORECAST = 'This is a what-if, not a forecast.';
+
+/** One honest line for next to the rain slider, from data/engine/future-rain.json. It says the
+    models show no clear change only when the file itself says so for every scenario at this field
+    (the middle, lowest and highest model all inside what chance alone gives). Otherwise, or when the
+    file is missing, just the what-if sentence. `place` is "here" or "around the X sample farm". */
+export function rainOutlookNote(future, fieldId, place = 'here') {
+  const scenarios = Object.values(future?.fields?.[fieldId]?.scenarios ?? {});
+  const noClearChange = scenarios.length > 0 && scenarios.every((scenario) =>
+    scenario?.dry_springs_per_20yr?.median_inside_chance_range === true
+    && scenario?.dry_springs_per_20yr?.lowest_and_highest_inside_chance_range === true);
+  const models = Array.isArray(future?.models) ? future.models.length : 0;
+  const [from, to] = Array.isArray(future?.future_years) ? future.future_years : [];
+  if (!noClearChange || !models || !isNumber(from) || !isNumber(to)) return WHAT_IF_NOT_FORECAST;
+  return `NASA's ${models} climate models show no clear change in dry springs ${place} for ${from} to ${to}. `
+    + WHAT_IF_NOT_FORECAST;
 }

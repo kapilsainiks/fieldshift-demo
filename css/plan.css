@@ -563,5 +563,41 @@ body[data-route="plan"] .apphead nav a[aria-current="page"] { background: rgba(2
   .plan #plan-bars.fading > li { animation: none; }
 }
 
+/* What your field went through: one compact row a season (year, crop or rest, spring rain as a
+   bar against normal). The table beside it is for screen readers only; its own class so the money
+   table stays the only table.nums on the Plan. */
+.plan .seasons-box { margin-top: 22px; max-width: 620px; }
+.plan .season-row {
+  display: grid; grid-template-columns: 52px 64px minmax(0, 1fr); align-items: center; column-gap: 12px; row-gap: 2px;
+  padding: 10px 0; border-top: 1px solid var(--hair); font-variant-numeric: tabular-nums;
+}
+.plan .season-row:first-child { border-top: 0; }
+.plan .season-year { font-size: 17px; font-weight: 600; }
+.plan .season-chip {
+  justify-self: start; padding: 2px 10px; border-radius: 999px; font-size: 13px; line-height: 1.5;
+  border: 1px solid var(--leaf); color: #fff; background: rgba(159, 211, 107, 0.14);
+}
+.plan .season-chip.is-rest { border: 1px dashed rgba(255, 255, 255, 0.5); color: var(--soft); background: transparent; }
+.plan .season-rain { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.plan .season-track { position: relative; flex: 1 1 auto; max-width: 260px; height: 10px; border-radius: 5px; background: rgba(255, 255, 255, 0.08); }
+.plan .season-track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: rgba(255, 255, 255, 0.7); }
+.plan .season-track b { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--leaf); }
+.plan .season-pct { flex: 0 0 auto; min-width: 78px; font-size: 14px; color: #fff; }
+.plan .season-pct.is-dry { font-weight: 600; }
+.plan .season-tag { grid-column: 3; font-size: 13px; color: var(--soft); }
+.plan .season-key { margin-top: 8px; font-size: 13px; color: var(--soft); display: flex; align-items: center; gap: 8px; }
+.plan .season-key i { display: inline-block; width: 2px; height: 14px; background: var(--leaf); }
+.plan .seasons-box + .quiet { margin-top: 14px; }
+@media (max-width: 767px) {
+  .plan .season-row { grid-template-columns: 44px 58px minmax(0, 1fr); column-gap: 10px; }
+  .plan .season-pct { min-width: 70px; font-size: 13px; }
+}
+
+/* The weather what-if: the honest note by the rain slider and the live result under the sliders. */
+.plan .wx-note { margin: 8px 0 18px; font-size: 14px; line-height: 1.45; color: var(--soft); max-width: 620px; }
+.plan .wx-result { margin-top: 18px; padding: 12px 14px; border-left: 3px solid var(--leaf); background: rgba(255, 255, 255, 0.05);
+  font-size: 17px; line-height: 1.45; color: #fff; max-width: 620px; font-weight: 500; }
+.plan .wx-result:empty { display: none; }
+
 /* Field Shift version: no strip trial. Hide the 12-acre test section and every link to it. */
 #plan-test, [data-el="totest"], .cmp-test { display: none !important; }

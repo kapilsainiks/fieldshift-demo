@@ -155,6 +155,37 @@ body[data-route="fields"] .apphead nav a[aria-current="page"] { background: rgba
 .fa .zoom button:hover { background: rgba(255, 255, 255, 0.16); }
 .fa .zoom button + button { box-shadow: -1px 0 0 var(--hair); }
 
+/* The map view switch: the map, crop or rest, heat. The pressed one is filled white. */
+.fa .views { display: inline-flex; flex: none; gap: 2px; padding: 2px; border-radius: 999px; }
+.fa .views button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: #fff; font-size: 14px; cursor: pointer; white-space: nowrap; }
+.fa .views button:hover { background: rgba(255, 255, 255, 0.16); }
+.fa .views button[aria-pressed="true"] { background: #fff; color: #000; font-weight: 700; }
+
+/* ---------- The year bar, along the bottom, with the crop-or-rest and heat views ---------- */
+
+.fa { --lift: 0px; }
+.fa.viewing { --lift: var(--bar-h, 104px); } /* the bar's height, measured by finder.js */
+.fa .mvbar { position: absolute; z-index: 4; left: var(--edge); right: var(--edge); bottom: 16px; padding: 10px 18px 6px; border-radius: 22px; }
+.fa[data-stage="found"] .mvbar { right: 468px; } /* left of the panel */
+.fa .mvbar.off { transform: translateY(12px); }
+.fa .mv-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 18px; }
+.fa .mv-line { font-size: 15px; line-height: 1.4; color: #fff; font-variant-numeric: tabular-nums; }
+.fa .mv-key { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--soft); }
+.fa .mv-hint { margin-top: 4px; font-size: 14px; line-height: 1.4; color: #fff; font-weight: 600; }
+.fa .mv-hint:empty { display: none; }
+.fa .mv-key span { display: inline-flex; align-items: center; gap: 6px; }
+.fa .mv-key .sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.7); }
+.fa .mv-key .grew { background: #7cc94f; }
+.fa .mv-key .rested { background: #e8c98f; }
+/* The GIBS colour map for land surface temperature, from about 60°F to 135°F. */
+.fa .mv-key .ramp { display: inline-block; width: 96px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, rgb(197, 255, 0), rgb(255, 255, 0), rgb(255, 205, 0), rgb(255, 151, 0), rgb(255, 103, 0)); }
+.fa .mv-key.fields .ramp { background: linear-gradient(90deg, #fff3b0, #ffcf5c, #ff9a3c, #ff5f2e, #e3262b); } /* finder-util FIELD_HEAT_RAMP */
+.fa .mv-row { display: flex; align-items: center; gap: 12px; }
+.fa .mv-play { flex: none; width: 44px; height: 44px; min-height: 0; padding: 0; border: 0; border-radius: 50%; background: #fff; color: #000; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.fa .mv-play:hover { background: #e9edf0; }
+.fa .mv-end { flex: none; font-size: 13px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.fa .mvbar input[type="range"] { flex: 1 1 auto; min-width: 0; accent-color: #fff; cursor: pointer; }
+
 /* ---------- The banner: big light type on the picture, bottom left, as on the home page ---------- */
 
 .fa .banner { position: absolute; z-index: 3; left: var(--edge); bottom: 64px; width: min(640px, calc(100% - 2 * var(--edge))); transition: opacity 0.28s ease, transform 0.28s ease, visibility 0s; }
@@ -262,6 +293,10 @@ body[data-route="fields"] .apphead nav a[aria-current="page"] { background: rgba
 .fa #dock-list-foot { padding-top: 6px; padding-bottom: 14px; }
 .fa #dock-list-foot .textbtn { margin-top: 0; }
 
+/* While the year bar shows, everything at the bottom left stands on it. */
+.fa .credit { bottom: calc(22px + var(--lift)); }
+.fa .banner, .fa .actions { bottom: calc(64px + var(--lift)); }
+
 /* ---------- Phones ---------- */
 
 @media (max-width: 767px) {
@@ -286,6 +321,13 @@ body[data-route="fields"] .apphead nav a[aria-current="page"] { background: rgba
   .fa .credit { bottom: 12px; max-width: 46%; }
   .fa .topleft { top: 68px; }
   .fa .place { max-width: calc(100vw - 2 * var(--edge) - 108px); }
+  .fa .topleft { flex-wrap: wrap; }
+  .fa.viewing { --lift: 0px; }
+  .fa .mvbar, .fa[data-stage="found"] .mvbar { position: static; margin-bottom: 14px; padding: 10px 14px 4px; }
+  .fa .mvbar.off { display: none; }
+  .fa[data-dock] .mvbar { margin: 0 -6px 10px; background: rgba(255, 255, 255, 0.06); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .fa .mv-line { font-size: 14px; }
+  .fa .mv-key { font-size: 12px; }
 
   /* The banner, the pills and the panel stack at the bottom. Once a field is found, or the list
      is open, that stack is one glass sheet. It scrolls inside; "See my plan" stays in view. */
@@ -341,7 +383,7 @@ body[data-route="fields"] .apphead nav a[aria-current="page"] { background: rgba
 @media (prefers-reduced-motion: reduce) {
   .fa .hero { animation: none; }
   .fa .piece, .fa .piece.off, .fa .shade, .fa .banner, .fa .banner > *, .fa .ans-more, .fa .ans-more > div, .fa .crosshair, .fa .hoverchip { transition: none; }
-  .fa .hero.off, .fa .topleft.off, .fa .banner.off, .fa .actions.off, .fa .dock.off { transform: none; }
+  .fa .hero.off, .fa .topleft.off, .fa .banner.off, .fa .actions.off, .fa .dock.off, .fa .mvbar.off { transform: none; }
 }
 
 /* The home page's .hero, .pill, .ghost and .cta rules are global; here they are put back to the mock's. */

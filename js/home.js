@@ -104,7 +104,9 @@ const TEMPLATE = `
       <summary>Sources</summary>
       <ul>
         <li>NASA POWER weather</li>
-        <li>NASA HLS satellite record (Landsat and Sentinel-2) for three fields near Ritzville</li>
+        <li>NASA HLS satellite record (Landsat and Sentinel-2) for fields in Adams, Lincoln and Whitman counties</li>
+        <li>NASA MODIS ground heat, through NASA GIBS, for the wider region</li>
+        <li>NASA ECOSTRESS ground heat, from the Space Station</li>
         <li>NASA GIBS and USDA NAIP imagery</li>
         <li>USDA NASS harvests and prices, and USDA RMA crop insurance</li>
         <li>WSU and University of Idaho crop budgets</li>
