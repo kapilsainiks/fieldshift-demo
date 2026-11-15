@@ -1,0 +1,38 @@
+{
+ "source": "WSDA Agricultural Land Use 2025",
+ "counties": [
+  {
+   "county": "Adams",
+   "file": "fields-adams.geojson",
+   "fields": 9143,
+   "bbox": [
+    -119.3692,
+    46.7355,
+    -117.9594,
+    47.2616
+   ]
+  },
+  {
+   "county": "Lincoln",
+   "file": "fields-lincoln.geojson",
+   "fields": 7702,
+   "bbox": [
+    -118.9797,
+    47.26,
+    -117.8195,
+    47.9333
+   ]
+  },
+  {
+   "county": "Whitman",
+   "file": "fields-whitman.geojson",
+   "fields": 16593,
+   "bbox": [
+    -118.2376,
+    46.4227,
+    -117.0395,
+    47.2606
+   ]
+  }
+ ]
+}

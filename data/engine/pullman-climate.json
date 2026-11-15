@@ -1,0 +1,606 @@
+{
+ "field": {
+  "pin": {
+   "lat": 46.86,
+   "lon": -117.3
+  },
+  "power_cell": [
+   47.0,
+   -117.5
+  ]
+ },
+ "trend_at_field_1981_2025": {
+  "place": "the Pullman sample farm (46.86 N, 117.30 W)",
+  "place_note": "These are NASA POWER readings for the one grid square that holds the sample farm. For a field elsewhere in Whitman County they are the sample farm's numbers, not that field's own.",
+  "rain_spring_mm": {
+   "label": "March to June rain",
+   "measure": "rain from March through June, added up",
+   "per_decade": -4.86,
+   "p_value": 0.429,
+   "mean_1981_2003": 213.6,
+   "mean_2004_2025": 209.0,
+   "rank_test_p_value": 0.457,
+   "theil_sen_per_decade": -5.08,
+   "theil_sen_95_range_per_decade": [
+    -18.09,
+    7.3
+   ],
+   "per_decade_in": -0.19,
+   "leave_one_year_out": {
+    "year": 2021,
+    "per_decade": -1.24,
+    "p_value": 0.828
+   },
+   "leans_on_one_year": false,
+   "note": ""
+  },
+  "heat_junjul_c": {
+   "label": "Peak heat in June and July",
+   "measure": "the hottest day of June and the hottest day of July, averaged",
+   "per_decade": 0.65,
+   "p_value": 0.018,
+   "mean_1981_2003": 32.5,
+   "mean_2004_2025": 33.7,
+   "rank_test_p_value": 0.043,
+   "theil_sen_per_decade": 0.5,
+   "theil_sen_95_range_per_decade": [
+    0.01,
+    1.02
+   ],
+   "per_decade_f": 1.18,
+   "without_hottest_year": {
+    "year": 2021,
+    "per_decade": 0.46,
+    "p_value": 0.057
+   },
+   "leave_one_year_out": {
+    "year": 2021,
+    "per_decade": 0.46,
+    "p_value": 0.057
+   },
+   "leans_on_one_year": true,
+   "note": "Peak heat slopes upward, but the slope leans on one year, 2021. Without 2021 the slope is about 0.46 C (0.82 F) per decade, and the other years alone do not show a clear trend. A steadier measure, the average daily high in June and July, rose 0.66 C (1.19 F) per decade, and that rise is clear.",
+   "trend_line": {
+    "2025": 34.52,
+    "2045": 35.83
+   }
+  },
+  "dry_springs_below_160mm": {
+   "1981_2003": 5,
+   "2004_2025": 5,
+   "all_years": 10,
+   "years": 45,
+   "list": [
+    1985,
+    1986,
+    1992,
+    1994,
+    1999,
+    2007,
+    2015,
+    2019,
+    2021,
+    2025
+   ]
+  },
+  "heat_daily_high_junjul_c": {
+   "label": "The average daily high in June and July",
+   "measure": "every day's high from June 1 to July 31, averaged",
+   "per_decade": 0.66,
+   "p_value": 0.002,
+   "mean_1981_2003": 24.68,
+   "mean_2004_2025": 26.07,
+   "rank_test_p_value": 0.005,
+   "theil_sen_per_decade": 0.59,
+   "theil_sen_95_range_per_decade": [
+    0.21,
+    0.95
+   ],
+   "per_decade_f": 1.19,
+   "source": "NASA POWER daily T2M_MAX, June 1 to July 31, averaged (power_pin_spring_check.csv)",
+   "leave_one_year_out": {
+    "year": 2021,
+    "per_decade": 0.54,
+    "p_value": 0.005
+   },
+   "leans_on_one_year": false,
+   "note": "",
+   "clear": true
+  }
+ },
+ "region": {
+  "dryland_cells": 16,
+  "pulse_share_model": {
+   "per_mm_spring_rain": 0.127,
+   "p_rain": 0.0013,
+   "per_degree_summer_heat": 0.68,
+   "p_heat": 0.685,
+   "r2": 0.71,
+   "r2_rain_only": 0.7,
+   "p_rain_only": 4.9e-05,
+   "r2_heat_only": 0.33,
+   "p_heat_only": 0.02
+  },
+  "bands": {
+   "spring_rain_below_160mm": {
+    "cells": 7,
+    "pulse_pct": 0.5,
+    "fallow_pct": 45.2,
+    "canola_pct": 2.5
+   },
+   "160_to_230mm": {
+    "cells": 5,
+    "pulse_pct": 9.8,
+    "fallow_pct": 23.3,
+    "canola_pct": 3.9
+   },
+   "230mm_and_up": {
+    "cells": 4,
+    "pulse_pct": 19.7,
+    "fallow_pct": 10.6,
+    "canola_pct": 7.9
+   }
+  },
+  "cells": [
+   {
+    "cell_lat": 45.5,
+    "cell_lon": -120.625,
+    "rain_spring_mm": 147.2,
+    "heat_junjul_c": 34.73,
+    "dryland_acres_yr": 393150,
+    "pulse": 0.0,
+    "fallow": 49.1,
+    "canola": 0.1,
+    "place": "Moro-Wasco area, OR"
+   },
+   {
+    "cell_lat": 45.5,
+    "cell_lon": -120.0,
+    "rain_spring_mm": 115.8,
+    "heat_junjul_c": 36.92,
+    "dryland_acres_yr": 366673,
+    "pulse": 0.1,
+    "fallow": 51.2,
+    "canola": 0.1,
+    "place": "Arlington-Ione area, OR"
+   },
+   {
+    "cell_lat": 45.5,
+    "cell_lon": -118.75,
+    "rain_spring_mm": 205.0,
+    "heat_junjul_c": 34.34,
+    "dryland_acres_yr": 221697,
+    "pulse": 4.8,
+    "fallow": 40.6,
+    "canola": 0.1,
+    "place": "Pendleton area, OR"
+   },
+   {
+    "cell_lat": 46.0,
+    "cell_lon": -118.125,
+    "rain_spring_mm": 248.7,
+    "heat_junjul_c": 33.06,
+    "dryland_acres_yr": 316107,
+    "pulse": 11.7,
+    "fallow": 25.0,
+    "canola": 2.1,
+    "place": "Walla Walla area, WA/OR"
+   },
+   {
+    "cell_lat": 46.5,
+    "cell_lon": -117.5,
+    "rain_spring_mm": 208.8,
+    "heat_junjul_c": 34.19,
+    "dryland_acres_yr": 379866,
+    "pulse": 9.1,
+    "fallow": 22.3,
+    "canola": 6.1,
+    "place": "Southern Whitman and Garfield counties, WA"
+   },
+   {
+    "cell_lat": 46.5,
+    "cell_lon": -116.875,
+    "rain_spring_mm": 238.7,
+    "heat_junjul_c": 34.89,
+    "dryland_acres_yr": 458112,
+    "pulse": 21.7,
+    "fallow": 7.0,
+    "canola": 11.0,
+    "place": "Moscow-Lewiston area, ID/WA"
+   },
+   {
+    "cell_lat": 46.5,
+    "cell_lon": -118.125,
+    "rain_spring_mm": 172.1,
+    "heat_junjul_c": 35.91,
+    "dryland_acres_yr": 455392,
+    "pulse": 6.9,
+    "fallow": 33.7,
+    "canola": 1.2,
+    "place": "Starbuck-Prescott area, WA"
+   },
+   {
+    "cell_lat": 46.5,
+    "cell_lon": -116.25,
+    "rain_spring_mm": 330.0,
+    "heat_junjul_c": 33.24,
+    "dryland_acres_yr": 197300,
+    "pulse": 16.6,
+    "fallow": 9.8,
+    "canola": 10.6,
+    "place": "Orofino area, ID"
+   },
+   {
+    "cell_lat": 47.0,
+    "cell_lon": -117.5,
+    "rain_spring_mm": 209.0,
+    "heat_junjul_c": 33.73,
+    "dryland_acres_yr": 732218,
+    "pulse": 12.3,
+    "fallow": 17.4,
+    "canola": 4.1,
+    "place": "this field's area (Colfax-St. John, WA)"
+   },
+   {
+    "cell_lat": 47.0,
+    "cell_lon": -116.875,
+    "rain_spring_mm": 258.3,
+    "heat_junjul_c": 33.4,
+    "dryland_acres_yr": 348956,
+    "pulse": 26.0,
+    "fallow": 2.9,
+    "canola": 7.5,
+    "place": "Potlatch-Tekoa area, ID/WA"
+   },
+   {
+    "cell_lat": 47.0,
+    "cell_lon": -118.125,
+    "rain_spring_mm": 142.3,
+    "heat_junjul_c": 36.33,
+    "dryland_acres_yr": 401988,
+    "pulse": 0.8,
+    "fallow": 44.5,
+    "canola": 1.1,
+    "place": "Ritzville town and east, WA"
+   },
+   {
+    "cell_lat": 47.5,
+    "cell_lon": -118.75,
+    "rain_spring_mm": 119.1,
+    "heat_junjul_c": 35.86,
+    "dryland_acres_yr": 448013,
+    "pulse": 1.1,
+    "fallow": 46.0,
+    "canola": 4.5,
+    "place": "Odessa-Almira area, WA"
+   },
+   {
+    "cell_lat": 47.5,
+    "cell_lon": -118.125,
+    "rain_spring_mm": 150.8,
+    "heat_junjul_c": 34.66,
+    "dryland_acres_yr": 435552,
+    "pulse": 0.8,
+    "fallow": 35.2,
+    "canola": 2.8,
+    "place": "Davenport-Sprague area, WA"
+   },
+   {
+    "cell_lat": 47.5,
+    "cell_lon": -117.5,
+    "rain_spring_mm": 191.9,
+    "heat_junjul_c": 33.96,
+    "dryland_acres_yr": 327623,
+    "pulse": 12.4,
+    "fallow": 11.7,
+    "canola": 7.3,
+    "place": "Spokane-Cheney area, WA"
+   },
+   {
+    "cell_lat": 48.0,
+    "cell_lon": -119.375,
+    "rain_spring_mm": 125.4,
+    "heat_junjul_c": 34.92,
+    "dryland_acres_yr": 174445,
+    "pulse": 0.1,
+    "fallow": 48.9,
+    "canola": 4.6,
+    "place": "Mansfield-Bridgeport area, WA"
+   },
+   {
+    "cell_lat": 48.0,
+    "cell_lon": -118.75,
+    "rain_spring_mm": 145.6,
+    "heat_junjul_c": 34.03,
+    "dryland_acres_yr": 178150,
+    "pulse": 0.4,
+    "fallow": 44.8,
+    "canola": 7.5,
+    "place": "Wilbur-Creston area, WA"
+   }
+  ]
+ },
+ "home_cell": {
+  "rain_spring_mm": 209.0,
+  "heat_junjul_c": 33.73,
+  "pulse_pct": 12.3,
+  "fallow_pct": 17.4,
+  "canola_pct": 4.1
+ },
+ "twins": {
+  "trend_2045": {
+   "target": {
+    "rain_spring_mm": 209.0,
+    "heat_junjul_c": 35.8
+   },
+   "areas": [
+    {
+     "place": "Starbuck-Prescott area, WA",
+     "cell": [
+      46.5,
+      -118.125
+     ],
+     "rain_spring_mm": 172.1,
+     "heat_junjul_c": 35.91,
+     "pulse_pct": 6.9,
+     "fallow_pct": 33.7,
+     "canola_pct": 1.2,
+     "dryland_acres_per_year": 455392
+    },
+    {
+     "place": "Moscow-Lewiston area, ID/WA",
+     "cell": [
+      46.5,
+      -116.875
+     ],
+     "rain_spring_mm": 238.7,
+     "heat_junjul_c": 34.89,
+     "pulse_pct": 21.7,
+     "fallow_pct": 7.0,
+     "canola_pct": 11.0,
+     "dryland_acres_per_year": 458112
+    },
+    {
+     "place": "Pendleton area, OR",
+     "cell": [
+      45.5,
+      -118.75
+     ],
+     "rain_spring_mm": 205.0,
+     "heat_junjul_c": 34.34,
+     "pulse_pct": 4.8,
+     "fallow_pct": 40.6,
+     "canola_pct": 0.1,
+     "dryland_acres_per_year": 221697
+    }
+   ]
+  },
+  "stress_bad_years_become_normal": {
+   "target": {
+    "rain_spring_mm": 139.6,
+    "heat_junjul_c": 36.6
+   },
+   "areas": [
+    {
+     "place": "Ritzville town and east, WA",
+     "cell": [
+      47.0,
+      -118.125
+     ],
+     "rain_spring_mm": 142.3,
+     "heat_junjul_c": 36.33,
+     "pulse_pct": 0.8,
+     "fallow_pct": 44.5,
+     "canola_pct": 1.1,
+     "dryland_acres_per_year": 401988
+    },
+    {
+     "place": "Arlington-Ione area, OR",
+     "cell": [
+      45.5,
+      -120.0
+     ],
+     "rain_spring_mm": 115.8,
+     "heat_junjul_c": 36.92,
+     "pulse_pct": 0.1,
+     "fallow_pct": 51.2,
+     "canola_pct": 0.1,
+     "dryland_acres_per_year": 366673
+    },
+    {
+     "place": "Odessa-Almira area, WA",
+     "cell": [
+      47.5,
+      -118.75
+     ],
+     "rain_spring_mm": 119.1,
+     "heat_junjul_c": 35.86,
+     "pulse_pct": 1.1,
+     "fallow_pct": 46.0,
+     "canola_pct": 4.5,
+     "dryland_acres_per_year": 448013
+    }
+   ]
+  }
+ },
+ "hot_dry_years_at_field": {
+  "2007": {
+   "rain_spring_mm": 154.6,
+   "heat_junjul_c": 33.63
+  },
+  "2015": {
+   "rain_spring_mm": 150.5,
+   "heat_junjul_c": 38.42
+  },
+  "2021": {
+   "rain_spring_mm": 60.1,
+   "heat_junjul_c": 42.01
+  },
+  "2024": {
+   "rain_spring_mm": 174.7,
+   "heat_junjul_c": 34.8
+  },
+  "2025": {
+   "rain_spring_mm": 158.2,
+   "heat_junjul_c": 34.09
+  }
+ },
+ "hot_dry_years_source": "hot_dry_years in app_data.json in the out folder (written by pipeline.py)",
+ "caveats": [
+  "NASA POWER cells are about 55 by 48 km. Each cell's temperature is an average over canyons and uplands, while the grain grows mostly on the uplands, so heat comparisons between areas are rougher than rain comparisons.",
+  "Crop shares come from USDA crop maps, which can mislabel some fields.",
+  "16 dryland cells is a small sample; the rain relationship is strong, the exact cutoff is rough.",
+  "NASA POWER is a grid estimate, not a rain gauge reading. The nearest rain gauge with NOAA 1991 to 2020 normals is PULLMAN 2 NW (USC00456789), 14.1 km from the pin and in the next NASA POWER cell (Potlatch-Tekoa area, ID/WA), not this field's. Over those same years NASA POWER for this field's cell gives 218.2 mm of March to June rain against 178.8 mm at the gauge (+22%), and 642 mm a year against 518 mm (+24%). NASA POWER for the cell that holds the gauge gives 258.3 mm and 769 mm (+44% and +48% against the gauge; these are 2004 to 2025 averages, the only years in the grid file). So NASA POWER reads wetter than the gauge in this field's cell and in the gauge's own cell.",
+  "Peak heat slopes upward 0.65 C per decade and passes both tests with all 45 years in (straight-line fit p = 0.02; rank test, which one extreme year sways less, p = 0.04). But the slope leans on one year, 2021: without it the slope is about 0.46 C per decade, and the other 44 years alone do not show a clear trend (p = 0.06). The average daily high in June and July rose 0.66 C per decade, and that rise is clear on both tests (p = 0.002 and p = 0.005).",
+  "Counted on April to June instead, the record shows no clear trend: rain (p = 0.28), days over 32 C (p = 0.32), heat above 32 C (p = 0.18). Hot or dry springs by decade since 1981: 3 of 10, 2 of 10, 4 of 10, 2 of 10, 2 of 5. April to June hot days and peak heat in June and July are different measures, so the two readings do not conflict."
+ ],
+ "spring_check_aprjun": {
+  "label": "April to June at the field, from NASA POWER daily data",
+  "dry_means": "April to June rain in the driest quarter of the 45 years (116.1 mm or less)",
+  "hot_means": "5 or more days over 32 C in April to June",
+  "hot_or_dry_springs_by_decade": [
+   {
+    "decade": "1981-1990",
+    "hot_or_dry_springs": 3,
+    "years": 10
+   },
+   {
+    "decade": "1991-2000",
+    "hot_or_dry_springs": 2,
+    "years": 10
+   },
+   {
+    "decade": "2001-2010",
+    "hot_or_dry_springs": 4,
+    "years": 10
+   },
+   {
+    "decade": "2011-2020",
+    "hot_or_dry_springs": 2,
+    "years": 10
+   },
+   {
+    "decade": "2021-2025",
+    "hot_or_dry_springs": 2,
+    "years": 5
+   }
+  ],
+  "trends": {
+   "rain_aprjun_mm": {
+    "per_decade": -5.15,
+    "p_value": 0.283,
+    "rank_test_p_value": 0.343
+   },
+   "days_over_32c": {
+    "per_decade": 0.21,
+    "p_value": 0.316,
+    "rank_test_p_value": 0.313
+   },
+   "heat_above_32c_degdays": {
+    "per_decade": 1.07,
+    "p_value": 0.178,
+    "rank_test_p_value": 0.315
+   }
+  }
+ },
+ "rain_gauge_check": {
+  "gauge": {
+   "station": "USC00456789",
+   "name": "PULLMAN 2 NW, WA US",
+   "lat": 46.7603,
+   "lon": -117.1861,
+   "km_from_pin": 14.1,
+   "power_cell": [
+    47.0,
+    -116.875
+   ],
+   "in_this_fields_cell": false,
+   "normal_years": [
+    1991,
+    2020
+   ],
+   "rain_spring_mm": 178.8,
+   "rain_annual_mm": 518.4
+  },
+  "power_this_fields_cell": {
+   "years": [
+    1991,
+    2020
+   ],
+   "rain_spring_mm": 218.2,
+   "rain_annual_mm": 641.8,
+   "against_gauge_pct": {
+    "rain_spring": 22,
+    "rain_annual": 24
+   },
+   "reading": "wetter than the gauge"
+  },
+  "power_gauges_cell": {
+   "years": [
+    2004,
+    2025
+   ],
+   "rain_spring_mm": 258.3,
+   "rain_annual_mm": 769.0,
+   "against_gauge_pct": {
+    "rain_spring": 44,
+    "rain_annual": 48
+   },
+   "reading": "wetter than the gauge"
+  }
+ },
+ "planting_signal_april_soil_moisture": {
+  "note": "Correlation of April root-zone soil wetness at the field with detrended yields. Seven crops were tested, so a single p near 0.02 could be chance; treat it as a lead. Yields for chickpeas, spring canola, lentils and dry peas come from state numbers in every year tested, not county ones, so for those crops this compares one field's soil with a statewide harvest.",
+  "by_crop": {
+   "B": {
+    "r": 0.05,
+    "p": 0.818,
+    "years": 21,
+    "county_yield_years": 18,
+    "in_an_option": true
+   },
+   "CP": {
+    "r": 0.51,
+    "p": 0.018,
+    "years": 21,
+    "county_yield_years": 0,
+    "in_an_option": true
+   },
+   "K": {
+    "r": 0.14,
+    "p": 0.616,
+    "years": 15,
+    "county_yield_years": 0,
+    "in_an_option": true
+   },
+   "L": {
+    "r": 0.3,
+    "p": 0.19,
+    "years": 21,
+    "county_yield_years": 0,
+    "in_an_option": true
+   },
+   "P": {
+    "r": 0.16,
+    "p": 0.49,
+    "years": 21,
+    "county_yield_years": 0,
+    "in_an_option": true
+   },
+   "SW": {
+    "r": 0.22,
+    "p": 0.329,
+    "years": 21,
+    "county_yield_years": 20,
+    "in_an_option": true
+   },
+   "WW": {
+    "r": 0.11,
+    "p": 0.627,
+    "years": 21,
+    "county_yield_years": 20,
+    "in_an_option": true
+   }
+  }
+ }
+}

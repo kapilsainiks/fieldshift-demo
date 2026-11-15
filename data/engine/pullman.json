@@ -1,0 +1,1741 @@
+{
+ "years": [
+  2005,
+  2006,
+  2007,
+  2008,
+  2009,
+  2010,
+  2011,
+  2012,
+  2013,
+  2014,
+  2015,
+  2016,
+  2017,
+  2018,
+  2019,
+  2020,
+  2021,
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "climate_weights": {
+  "2005": 0.03977272727272727,
+  "2006": 0.03977272727272727,
+  "2007": 0.07272727272727272,
+  "2008": 0.03977272727272727,
+  "2009": 0.03977272727272727,
+  "2010": 0.03977272727272727,
+  "2011": 0.03977272727272727,
+  "2012": 0.03977272727272727,
+  "2013": 0.03977272727272727,
+  "2014": 0.03977272727272727,
+  "2015": 0.07272727272727272,
+  "2016": 0.03977272727272727,
+  "2017": 0.03977272727272727,
+  "2018": 0.03977272727272727,
+  "2019": 0.03977272727272727,
+  "2020": 0.03977272727272727,
+  "2021": 0.07272727272727272,
+  "2022": 0.03977272727272727,
+  "2023": 0.03977272727272727,
+  "2024": 0.07272727272727272,
+  "2025": 0.07272727272727272
+ },
+ "hot_dry_years": [
+  2007,
+  2015,
+  2021,
+  2024,
+  2025
+ ],
+ "real_dollar_year": 2016,
+ "bad_year_percentile": 0.2,
+ "current_option": "current",
+ "crops": {
+  "WW": {
+   "name": "Winter wheat",
+   "unit": "bu",
+   "cost": 265.0,
+   "pulse": false,
+   "fallow": false,
+   "cost_source": {
+    "cost": 265.0,
+    "dollar_year": 2016,
+    "document": "University of Idaho (K. Painter), 'Enterprise Budgets for the Dryland Grain Annual Cropping Region of the Pacific Northwest, 2016 Crop and Input Prices', high rainfall (https://www.reacchpna.org/sites/default/files/HighRainfallEnterpriseBudget_2016prices.pdf)",
+    "table": "Table 1, 'Summary of Returns by Crop and Rotation', column 'Variable Costs (VC)'",
+    "arithmetic": "$265, read directly (2016 dollars).",
+    "caveat": "2016 costs for a 2,500-acre farm on a 3-year rotation; 2026 costs are higher."
+   },
+   "yield_source": "Whitman County yields (USDA NASS) for 30 of the years since 1995; 1 year filled from the Washington state yield x 1.23 (the usual county-to-state ratio).",
+   "yield_basis": "local"
+  },
+  "SW": {
+   "name": "Spring wheat",
+   "unit": "bu",
+   "cost": 214.0,
+   "pulse": false,
+   "fallow": false,
+   "cost_source": {
+    "cost": 214.0,
+    "dollar_year": 2016,
+    "document": "University of Idaho (K. Painter), 'Enterprise Budgets for the Dryland Grain Annual Cropping Region of the Pacific Northwest, 2016 Crop and Input Prices', high rainfall (https://www.reacchpna.org/sites/default/files/HighRainfallEnterpriseBudget_2016prices.pdf)",
+    "table": "Table 1, 'Summary of Returns by Crop and Rotation', column 'Variable Costs (VC)'",
+    "arithmetic": "$214, read directly (2016 dollars).",
+    "caveat": "2016 costs for a 2,500-acre farm on a 3-year rotation; 2026 costs are higher."
+   },
+   "yield_source": "Whitman County yields (USDA NASS) for 30 of the years since 1995; 1 year filled from the Washington state yield x 1.06 (the usual county-to-state ratio).",
+   "yield_basis": "local"
+  },
+  "B": {
+   "name": "Barley",
+   "unit": "bu",
+   "cost": 193.0,
+   "pulse": false,
+   "fallow": false,
+   "cost_source": {
+    "cost": 193.0,
+    "dollar_year": 2016,
+    "document": "University of Idaho (K. Painter), 'Enterprise Budgets for the Dryland Grain Annual Cropping Region of the Pacific Northwest, 2016 Crop and Input Prices', high rainfall (https://www.reacchpna.org/sites/default/files/HighRainfallEnterpriseBudget_2016prices.pdf)",
+    "table": "Table 1, 'Summary of Returns by Crop and Rotation', column 'Variable Costs (VC)'",
+    "arithmetic": "$193, read directly (2016 dollars).",
+    "caveat": "2016 costs for a 2,500-acre farm on a 3-year rotation; 2026 costs are higher."
+   },
+   "yield_source": "Whitman County yields (USDA NASS) for 28 of the years since 1995; 3 years filled from the Washington state yield x 1.09 (the usual county-to-state ratio).",
+   "yield_basis": "local"
+  },
+  "P": {
+   "name": "Dry peas",
+   "unit": "cwt",
+   "cost": 213.0,
+   "pulse": true,
+   "fallow": false,
+   "cost_source": {
+    "cost": 213.0,
+    "dollar_year": 2016,
+    "document": "University of Idaho (K. Painter), 'Enterprise Budgets for the Dryland Grain Annual Cropping Region of the Pacific Northwest, 2016 Crop and Input Prices', high rainfall (https://www.reacchpna.org/sites/default/files/HighRainfallEnterpriseBudget_2016prices.pdf)",
+    "table": "Table 1, 'Summary of Returns by Crop and Rotation', column 'Variable Costs (VC)'",
+    "arithmetic": "$213, read directly (2016 dollars).",
+    "caveat": "2016 costs for a 2,500-acre farm on a 3-year rotation; 2026 costs are higher."
+   },
+   "yield_source": "Washington state yields (USDA NASS), not scaled: NASS publishes no Whitman County yield for this crop.",
+   "yield_basis": "state_average"
+  },
+  "L": {
+   "name": "Lentils",
+   "unit": "cwt",
+   "cost": 145.0,
+   "pulse": true,
+   "fallow": false,
+   "cost_source": {
+    "cost": 145.0,
+    "dollar_year": 2016,
+    "document": "University of Idaho (K. Painter), 'Enterprise Budgets for the Dryland Grain Annual Cropping Region of the Pacific Northwest, 2016 Crop and Input Prices', high rainfall (https://www.reacchpna.org/sites/default/files/HighRainfallEnterpriseBudget_2016prices.pdf)",
+    "table": "Table 1, 'Summary of Returns by Crop and Rotation', column 'Variable Costs (VC)'",
+    "arithmetic": "$145, read directly (2016 dollars).",
+    "caveat": "2016 costs for a 2,500-acre farm on a 3-year rotation; 2026 costs are higher."
+   },
+   "yield_source": "Washington state yields (USDA NASS), not scaled: NASS publishes no Whitman County yield for this crop.",
+   "yield_basis": "state_average"
+  },
+  "CP": {
+   "name": "Chickpeas",
+   "unit": "cwt",
+   "cost": 204.0,
+   "pulse": true,
+   "fallow": false,
+   "cost_source": {
+    "cost": 204.0,
+    "dollar_year": 2016,
+    "document": "University of Idaho (K. Painter), 'Enterprise Budgets for the Dryland Grain Annual Cropping Region of the Pacific Northwest, 2016 Crop and Input Prices', high rainfall (https://www.reacchpna.org/sites/default/files/HighRainfallEnterpriseBudget_2016prices.pdf)",
+    "table": "Table 1, 'Summary of Returns by Crop and Rotation', column 'Variable Costs (VC)'",
+    "arithmetic": "$204, read directly (2016 dollars).",
+    "caveat": "2016 costs for a 2,500-acre farm on a 3-year rotation; 2026 costs are higher."
+   },
+   "yield_source": "Washington state yields (USDA NASS), not scaled: NASS publishes no Whitman County yield for this crop.",
+   "yield_basis": "state_average"
+  },
+  "K": {
+   "name": "Spring canola",
+   "unit": "cwt",
+   "cost": 230.0,
+   "pulse": false,
+   "fallow": false,
+   "cost_source": {
+    "cost": 230.0,
+    "dollar_year": 2016,
+    "document": "University of Idaho (K. Painter), 'Enterprise Budgets for the Dryland Grain Annual Cropping Region of the Pacific Northwest, 2016 Crop and Input Prices', high rainfall (https://www.reacchpna.org/sites/default/files/HighRainfallEnterpriseBudget_2016prices.pdf)",
+    "table": "Table 1, 'Summary of Returns by Crop and Rotation', column 'Variable Costs (VC)'",
+    "arithmetic": "$230, read directly (2016 dollars).",
+    "caveat": "2016 costs for a 2,500-acre farm on a 3-year rotation; 2026 costs are higher."
+   },
+   "yield_source": "Washington state yields (USDA NASS), not scaled: NASS publishes no Whitman County yield for this crop.",
+   "yield_basis": "state_average"
+  }
+ },
+ "options": {
+  "current": {
+   "label": "Keep chickpeas (current)",
+   "crops": [
+    "WW",
+    "SW",
+    "CP"
+   ],
+   "full_record": true,
+   "soil_score": 9,
+   "twin": {
+    "near": 16.3,
+    "county": 6.9,
+    "near_acres_once": 19.2,
+    "county_acres_once": 8.5,
+    "window_years": 6,
+    "turns": 2,
+    "near_two_turns": 16.29,
+    "county_two_turns": 6.85,
+    "two_turn_window_years": 6
+   },
+   "yield_basis": {
+    "local": [
+     "WW",
+     "SW"
+    ],
+    "state_average": [
+     "CP"
+    ]
+   }
+  },
+  "lentils": {
+   "label": "Swap chickpeas for lentils",
+   "crops": [
+    "WW",
+    "SW",
+    "L"
+   ],
+   "full_record": true,
+   "soil_score": 7,
+   "twin": {
+    "near": 0.0,
+    "county": 1.6,
+    "near_acres_once": 0.0,
+    "county_acres_once": 2.3,
+    "window_years": 6,
+    "turns": 2,
+    "near_two_turns": 0.0,
+    "county_two_turns": 1.61,
+    "two_turn_window_years": 6
+   },
+   "yield_basis": {
+    "local": [
+     "WW",
+     "SW"
+    ],
+    "state_average": [
+     "L"
+    ]
+   }
+  },
+  "peas": {
+   "label": "Swap chickpeas for dry peas",
+   "crops": [
+    "WW",
+    "SW",
+    "P"
+   ],
+   "full_record": true,
+   "soil_score": 9,
+   "twin": {
+    "near": 0.0,
+    "county": 0.6,
+    "near_acres_once": 0.0,
+    "county_acres_once": 0.8,
+    "window_years": 6,
+    "turns": 2,
+    "near_two_turns": 0.0,
+    "county_two_turns": 0.57,
+    "two_turn_window_years": 6
+   },
+   "yield_basis": {
+    "local": [
+     "WW",
+     "SW"
+    ],
+    "state_average": [
+     "P"
+    ]
+   }
+  },
+  "barley": {
+   "label": "Swap chickpeas for barley",
+   "crops": [
+    "WW",
+    "SW",
+    "B"
+   ],
+   "full_record": true,
+   "soil_score": 5,
+   "twin": {
+    "near": 0.0,
+    "county": 0.0,
+    "near_acres_once": 0.0,
+    "county_acres_once": 0.0,
+    "window_years": 6,
+    "turns": 2,
+    "near_two_turns": 0.0,
+    "county_two_turns": 0.0,
+    "two_turn_window_years": 6
+   },
+   "yield_basis": {
+    "local": [
+     "WW",
+     "SW",
+     "B"
+    ],
+    "state_average": []
+   }
+  },
+  "canola": {
+   "label": "Swap chickpeas for canola",
+   "crops": [
+    "WW",
+    "SW",
+    "K"
+   ],
+   "full_record": false,
+   "soil_score": 5,
+   "twin": {
+    "near": 0.1,
+    "county": 0.3,
+    "near_acres_once": 0.4,
+    "county_acres_once": 0.6,
+    "window_years": 6,
+    "turns": 2,
+    "near_two_turns": 0.14,
+    "county_two_turns": 0.28,
+    "two_turn_window_years": 6
+   },
+   "yield_basis": {
+    "local": [
+     "WW",
+     "SW"
+    ],
+    "state_average": [
+     "K"
+    ]
+   }
+  }
+ },
+ "crop_year": [
+  {
+   "crop": "B",
+   "year": 2005,
+   "yield": 68.3,
+   "price_real": 2.655
+  },
+  {
+   "crop": "B",
+   "year": 2006,
+   "yield": 67.7,
+   "price_real": 3.429
+  },
+  {
+   "crop": "B",
+   "year": 2007,
+   "yield": 70.5,
+   "price_real": 5.88
+  },
+  {
+   "crop": "B",
+   "year": 2008,
+   "yield": 65.0,
+   "price_real": 3.891
+  },
+  {
+   "crop": "B",
+   "year": 2009,
+   "yield": 73.0,
+   "price_real": 3.244
+  },
+  {
+   "crop": "B",
+   "year": 2010,
+   "yield": 74.8,
+   "price_real": 4.028
+  },
+  {
+   "crop": "B",
+   "year": 2011,
+   "yield": 84.9,
+   "price_real": 5.175
+  },
+  {
+   "crop": "B",
+   "year": 2012,
+   "yield": 77.5,
+   "price_real": 5.781
+  },
+  {
+   "crop": "B",
+   "year": 2013,
+   "yield": 77.8,
+   "price_real": 4.245
+  },
+  {
+   "crop": "B",
+   "year": 2014,
+   "yield": 65.0,
+   "price_real": 3.589
+  },
+  {
+   "crop": "B",
+   "year": 2015,
+   "yield": 52.9,
+   "price_real": 3.352
+  },
+  {
+   "crop": "B",
+   "year": 2016,
+   "yield": 84.5,
+   "price_real": 2.89
+  },
+  {
+   "crop": "B",
+   "year": 2017,
+   "yield": 57.9,
+   "price_real": 3.026
+  },
+  {
+   "crop": "B",
+   "year": 2018,
+   "yield": 79.8,
+   "price_real": 4.206
+  },
+  {
+   "crop": "B",
+   "year": 2019,
+   "yield": 76.6,
+   "price_real": 4.769
+  },
+  {
+   "crop": "B",
+   "year": 2020,
+   "yield": 93.9,
+   "price_real": 4.719
+  },
+  {
+   "crop": "B",
+   "year": 2021,
+   "yield": 40.8,
+   "price_real": 5.943
+  },
+  {
+   "crop": "B",
+   "year": 2022,
+   "yield": 91.1,
+   "price_real": 5.29
+  },
+  {
+   "crop": "B",
+   "year": 2023,
+   "yield": 50.6,
+   "price_real": 6.427
+  },
+  {
+   "crop": "B",
+   "year": 2024,
+   "yield": 72.1,
+   "price_real": 4.728
+  },
+  {
+   "crop": "B",
+   "year": 2025,
+   "yield": 45.5,
+   "price_real": 2.863
+  },
+  {
+   "crop": "CP",
+   "year": 2005,
+   "yield": 900.0,
+   "price_real": 32.17
+  },
+  {
+   "crop": "CP",
+   "year": 2006,
+   "yield": 1310.0,
+   "price_real": 31.166
+  },
+  {
+   "crop": "CP",
+   "year": 2007,
+   "yield": 1300.0,
+   "price_real": 34.59
+  },
+  {
+   "crop": "CP",
+   "year": 2008,
+   "yield": 1500.0,
+   "price_real": 38.029
+  },
+  {
+   "crop": "CP",
+   "year": 2009,
+   "yield": 1610.0,
+   "price_real": 31.236
+  },
+  {
+   "crop": "CP",
+   "year": 2010,
+   "yield": 1120.0,
+   "price_real": 31.98
+  },
+  {
+   "crop": "CP",
+   "year": 2011,
+   "yield": 1670.0,
+   "price_real": 41.012
+  },
+  {
+   "crop": "CP",
+   "year": 2012,
+   "yield": 1660.0,
+   "price_real": 37.594
+  },
+  {
+   "crop": "CP",
+   "year": 2013,
+   "yield": 1630.0,
+   "price_real": 31.849
+  },
+  {
+   "crop": "CP",
+   "year": 2014,
+   "yield": 1150.0,
+   "price_real": 28.104
+  },
+  {
+   "crop": "CP",
+   "year": 2015,
+   "yield": 1020.0,
+   "price_real": 29.948
+  },
+  {
+   "crop": "CP",
+   "year": 2016,
+   "yield": 1780.0,
+   "price_real": 29.677
+  },
+  {
+   "crop": "CP",
+   "year": 2017,
+   "yield": 1340.0,
+   "price_real": 30.268
+  },
+  {
+   "crop": "CP",
+   "year": 2018,
+   "yield": 1680.0,
+   "price_real": 20.88
+  },
+  {
+   "crop": "CP",
+   "year": 2019,
+   "yield": 1700.0,
+   "price_real": 16.429
+  },
+  {
+   "crop": "CP",
+   "year": 2020,
+   "yield": 1760.0,
+   "price_real": 20.861
+  },
+  {
+   "crop": "CP",
+   "year": 2021,
+   "yield": 820.0,
+   "price_real": 29.849
+  },
+  {
+   "crop": "CP",
+   "year": 2022,
+   "yield": 1430.0,
+   "price_real": 27.968
+  },
+  {
+   "crop": "CP",
+   "year": 2023,
+   "yield": 1360.0,
+   "price_real": 31.113
+  },
+  {
+   "crop": "CP",
+   "year": 2024,
+   "yield": 1250.0,
+   "price_real": 25.095
+  },
+  {
+   "crop": "CP",
+   "year": 2025,
+   "yield": 1330.0,
+   "price_real": 17.667
+  },
+  {
+   "crop": "K",
+   "year": 2005,
+   "yield": null,
+   "price_real": 11.705
+  },
+  {
+   "crop": "K",
+   "year": 2006,
+   "yield": null,
+   "price_real": 14.027
+  },
+  {
+   "crop": "K",
+   "year": 2007,
+   "yield": null,
+   "price_real": 20.969
+  },
+  {
+   "crop": "K",
+   "year": 2008,
+   "yield": null,
+   "price_real": 20.64
+  },
+  {
+   "crop": "K",
+   "year": 2009,
+   "yield": null,
+   "price_real": 17.938
+  },
+  {
+   "crop": "K",
+   "year": 2010,
+   "yield": null,
+   "price_real": 21.027
+  },
+  {
+   "crop": "K",
+   "year": 2011,
+   "yield": 1900.0,
+   "price_real": 24.115
+  },
+  {
+   "crop": "K",
+   "year": 2012,
+   "yield": 1800.0,
+   "price_real": 27.284
+  },
+  {
+   "crop": "K",
+   "year": 2013,
+   "yield": 1700.0,
+   "price_real": 22.151
+  },
+  {
+   "crop": "K",
+   "year": 2014,
+   "yield": 1200.0,
+   "price_real": 18.656
+  },
+  {
+   "crop": "K",
+   "year": 2015,
+   "yield": 1100.0,
+   "price_real": 17.722
+  },
+  {
+   "crop": "K",
+   "year": 2016,
+   "yield": 2000.0,
+   "price_real": 15.7
+  },
+  {
+   "crop": "K",
+   "year": 2017,
+   "yield": 1680.0,
+   "price_real": 17.722
+  },
+  {
+   "crop": "K",
+   "year": 2018,
+   "yield": 1790.0,
+   "price_real": 16.153
+  },
+  {
+   "crop": "K",
+   "year": 2019,
+   "yield": 1950.0,
+   "price_real": 14.645
+  },
+  {
+   "crop": "K",
+   "year": 2020,
+   "yield": 2230.0,
+   "price_real": 18.729
+  },
+  {
+   "crop": "K",
+   "year": 2021,
+   "yield": 1100.0,
+   "price_real": 28.697
+  },
+  {
+   "crop": "K",
+   "year": 2022,
+   "yield": 1700.0,
+   "price_real": 24.195
+  },
+  {
+   "crop": "K",
+   "year": 2023,
+   "yield": 1640.0,
+   "price_real": 18.51
+  },
+  {
+   "crop": "K",
+   "year": 2024,
+   "yield": 1820.0,
+   "price_real": 14.154
+  },
+  {
+   "crop": "K",
+   "year": 2025,
+   "yield": 1530.0,
+   "price_real": 15.505
+  },
+  {
+   "crop": "L",
+   "year": 2005,
+   "yield": 1000.0,
+   "price_real": 14.381
+  },
+  {
+   "crop": "L",
+   "year": 2006,
+   "yield": 1000.0,
+   "price_real": 19.766
+  },
+  {
+   "crop": "L",
+   "year": 2007,
+   "yield": 1200.0,
+   "price_real": 36.23
+  },
+  {
+   "crop": "L",
+   "year": 2008,
+   "yield": 1100.0,
+   "price_real": 38.021
+  },
+  {
+   "crop": "L",
+   "year": 2009,
+   "yield": 1400.0,
+   "price_real": 29.978
+  },
+  {
+   "crop": "L",
+   "year": 2010,
+   "yield": 1100.0,
+   "price_real": 33.237
+  },
+  {
+   "crop": "L",
+   "year": 2011,
+   "yield": 1400.0,
+   "price_real": 33.505
+  },
+  {
+   "crop": "L",
+   "year": 2012,
+   "yield": 1300.0,
+   "price_real": 28.434
+  },
+  {
+   "crop": "L",
+   "year": 2013,
+   "yield": 1500.0,
+   "price_real": 26.066
+  },
+  {
+   "crop": "L",
+   "year": 2014,
+   "yield": 1100.0,
+   "price_real": 32.445
+  },
+  {
+   "crop": "L",
+   "year": 2015,
+   "yield": 750.0,
+   "price_real": 39.494
+  },
+  {
+   "crop": "L",
+   "year": 2016,
+   "yield": 1400.0,
+   "price_real": 27.6
+  },
+  {
+   "crop": "L",
+   "year": 2017,
+   "yield": 950.0,
+   "price_real": 28.786
+  },
+  {
+   "crop": "L",
+   "year": 2018,
+   "yield": 1240.0,
+   "price_real": 22.748
+  },
+  {
+   "crop": "L",
+   "year": 2019,
+   "yield": 1080.0,
+   "price_real": 16.898
+  },
+  {
+   "crop": "L",
+   "year": 2020,
+   "yield": 1330.0,
+   "price_real": 19.1
+  },
+  {
+   "crop": "L",
+   "year": 2021,
+   "yield": 760.0,
+   "price_real": 34.366
+  },
+  {
+   "crop": "L",
+   "year": 2022,
+   "yield": 900.0,
+   "price_real": 34.858
+  },
+  {
+   "crop": "L",
+   "year": 2023,
+   "yield": 890.0,
+   "price_real": 33.161
+  },
+  {
+   "crop": "L",
+   "year": 2024,
+   "yield": 960.0,
+   "price_real": 28.767
+  },
+  {
+   "crop": "L",
+   "year": 2025,
+   "yield": 1100.0,
+   "price_real": 22.289
+  },
+  {
+   "crop": "P",
+   "year": 2005,
+   "yield": 1700.0,
+   "price_real": 6.809
+  },
+  {
+   "crop": "P",
+   "year": 2006,
+   "yield": 1800.0,
+   "price_real": 8.835
+  },
+  {
+   "crop": "P",
+   "year": 2007,
+   "yield": 1900.0,
+   "price_real": 16.784
+  },
+  {
+   "crop": "P",
+   "year": 2008,
+   "yield": 1600.0,
+   "price_real": 16.056
+  },
+  {
+   "crop": "P",
+   "year": 2009,
+   "yield": 2000.0,
+   "price_real": 12.64
+  },
+  {
+   "crop": "P",
+   "year": 2010,
+   "yield": 1900.0,
+   "price_real": 12.656
+  },
+  {
+   "crop": "P",
+   "year": 2011,
+   "yield": 2100.0,
+   "price_real": 16.753
+  },
+  {
+   "crop": "P",
+   "year": 2012,
+   "yield": 2200.0,
+   "price_real": 18.085
+  },
+  {
+   "crop": "P",
+   "year": 2013,
+   "yield": 2300.0,
+   "price_real": 17.103
+  },
+  {
+   "crop": "P",
+   "year": 2014,
+   "yield": 1900.0,
+   "price_real": 15.614
+  },
+  {
+   "crop": "P",
+   "year": 2015,
+   "yield": 1400.0,
+   "price_real": 14.582
+  },
+  {
+   "crop": "P",
+   "year": 2016,
+   "yield": 2400.0,
+   "price_real": 12.3
+  },
+  {
+   "crop": "P",
+   "year": 2017,
+   "yield": 2000.0,
+   "price_real": 12.924
+  },
+  {
+   "crop": "P",
+   "year": 2018,
+   "yield": 2550.0,
+   "price_real": 11.087
+  },
+  {
+   "crop": "P",
+   "year": 2019,
+   "yield": 2000.0,
+   "price_real": 11.547
+  },
+  {
+   "crop": "P",
+   "year": 2020,
+   "yield": 3080.0,
+   "price_real": 9.921
+  },
+  {
+   "crop": "P",
+   "year": 2021,
+   "yield": 1320.0,
+   "price_real": 15.323
+  },
+  {
+   "crop": "P",
+   "year": 2022,
+   "yield": 2100.0,
+   "price_real": 13.615
+  },
+  {
+   "crop": "P",
+   "year": 2023,
+   "yield": 1990.0,
+   "price_real": 14.414
+  },
+  {
+   "crop": "P",
+   "year": 2024,
+   "yield": 1930.0,
+   "price_real": 10.788
+  },
+  {
+   "crop": "P",
+   "year": 2025,
+   "yield": 1740.0,
+   "price_real": 7.827
+  },
+  {
+   "crop": "SW",
+   "year": 2005,
+   "yield": 39.2,
+   "price_real": 4.081
+  },
+  {
+   "crop": "SW",
+   "year": 2006,
+   "yield": 48.3,
+   "price_real": 5.346
+  },
+  {
+   "crop": "SW",
+   "year": 2007,
+   "yield": 46.9,
+   "price_real": 8.774
+  },
+  {
+   "crop": "SW",
+   "year": 2008,
+   "yield": 44.5,
+   "price_real": 6.98
+  },
+  {
+   "crop": "SW",
+   "year": 2009,
+   "yield": 49.5,
+   "price_real": 5.425
+  },
+  {
+   "crop": "SW",
+   "year": 2010,
+   "yield": 49.1,
+   "price_real": 6.867
+  },
+  {
+   "crop": "SW",
+   "year": 2011,
+   "yield": 60.7,
+   "price_real": 7.235
+  },
+  {
+   "crop": "SW",
+   "year": 2012,
+   "yield": 56.2,
+   "price_real": 8.436
+  },
+  {
+   "crop": "SW",
+   "year": 2013,
+   "yield": 61.2,
+   "price_real": 7.16
+  },
+  {
+   "crop": "SW",
+   "year": 2014,
+   "yield": 42.6,
+   "price_real": 6.641
+  },
+  {
+   "crop": "SW",
+   "year": 2015,
+   "yield": 40.0,
+   "price_real": 5.418
+  },
+  {
+   "crop": "SW",
+   "year": 2016,
+   "yield": 58.6,
+   "price_real": 4.16
+  },
+  {
+   "crop": "SW",
+   "year": 2017,
+   "yield": 44.7,
+   "price_real": 4.749
+  },
+  {
+   "crop": "SW",
+   "year": 2018,
+   "yield": 56.9,
+   "price_real": 5.267
+  },
+  {
+   "crop": "SW",
+   "year": 2019,
+   "yield": 49.6,
+   "price_real": 5.192
+  },
+  {
+   "crop": "SW",
+   "year": 2020,
+   "yield": 70.5,
+   "price_real": 5.285
+  },
+  {
+   "crop": "SW",
+   "year": 2021,
+   "yield": 33.3,
+   "price_real": 7.679
+  },
+  {
+   "crop": "SW",
+   "year": 2022,
+   "yield": 50.4,
+   "price_real": 6.668
+  },
+  {
+   "crop": "SW",
+   "year": 2023,
+   "yield": 43.2,
+   "price_real": 4.671
+  },
+  {
+   "crop": "SW",
+   "year": 2024,
+   "yield": 45.6,
+   "price_real": 3.978
+  },
+  {
+   "crop": "SW",
+   "year": 2025,
+   "yield": 42.0,
+   "price_real": 3.861
+  },
+  {
+   "crop": "WW",
+   "year": 2005,
+   "yield": 85.4,
+   "price_real": 4.081
+  },
+  {
+   "crop": "WW",
+   "year": 2006,
+   "yield": 74.7,
+   "price_real": 5.346
+  },
+  {
+   "crop": "WW",
+   "year": 2007,
+   "yield": 74.1,
+   "price_real": 8.774
+  },
+  {
+   "crop": "WW",
+   "year": 2008,
+   "yield": 72.0,
+   "price_real": 6.98
+  },
+  {
+   "crop": "WW",
+   "year": 2009,
+   "yield": 69.0,
+   "price_real": 5.425
+  },
+  {
+   "crop": "WW",
+   "year": 2010,
+   "yield": 83.1,
+   "price_real": 6.867
+  },
+  {
+   "crop": "WW",
+   "year": 2011,
+   "yield": 89.5,
+   "price_real": 7.235
+  },
+  {
+   "crop": "WW",
+   "year": 2012,
+   "yield": 81.9,
+   "price_real": 8.436
+  },
+  {
+   "crop": "WW",
+   "year": 2013,
+   "yield": 83.9,
+   "price_real": 7.16
+  },
+  {
+   "crop": "WW",
+   "year": 2014,
+   "yield": 70.2,
+   "price_real": 6.641
+  },
+  {
+   "crop": "WW",
+   "year": 2015,
+   "yield": 72.1,
+   "price_real": 5.418
+  },
+  {
+   "crop": "WW",
+   "year": 2016,
+   "yield": 93.3,
+   "price_real": 4.16
+  },
+  {
+   "crop": "WW",
+   "year": 2017,
+   "yield": 84.8,
+   "price_real": 4.749
+  },
+  {
+   "crop": "WW",
+   "year": 2018,
+   "yield": 93.3,
+   "price_real": 5.267
+  },
+  {
+   "crop": "WW",
+   "year": 2019,
+   "yield": 81.5,
+   "price_real": 5.192
+  },
+  {
+   "crop": "WW",
+   "year": 2020,
+   "yield": 95.9,
+   "price_real": 5.285
+  },
+  {
+   "crop": "WW",
+   "year": 2021,
+   "yield": 53.8,
+   "price_real": 7.679
+  },
+  {
+   "crop": "WW",
+   "year": 2022,
+   "yield": 86.1,
+   "price_real": 6.668
+  },
+  {
+   "crop": "WW",
+   "year": 2023,
+   "yield": 70.5,
+   "price_real": 4.671
+  },
+  {
+   "crop": "WW",
+   "year": 2024,
+   "yield": 86.1,
+   "price_real": 3.978
+  },
+  {
+   "crop": "WW",
+   "year": 2025,
+   "yield": 84.9,
+   "price_real": 3.861
+  }
+ ],
+ "prices_today": {
+  "WW": {
+   "nominal": 5.88,
+   "real": 4.271,
+   "unit": "bu",
+   "source": "Washington, 3-month average"
+  },
+  "SW": {
+   "nominal": 6.0,
+   "real": 4.355,
+   "unit": "bu",
+   "source": "Washington, 3-month average"
+  },
+  "B": {
+   "nominal": 4.1,
+   "real": 2.982,
+   "unit": "bu",
+   "source": "Washington, 2-month average"
+  },
+  "P": {
+   "nominal": 10.31,
+   "real": 7.49,
+   "unit": "cwt",
+   "source": "US price x 1.01, Washington withheld"
+  },
+  "K": {
+   "nominal": 23.87,
+   "real": 17.335,
+   "unit": "cwt",
+   "source": "Washington, 3-month average"
+  },
+  "L": {
+   "nominal": 19.09,
+   "real": 13.867,
+   "unit": "cwt",
+   "source": "US price x 1.07, Washington withheld"
+  },
+  "CP": {
+   "nominal": 21.2,
+   "real": 15.4,
+   "unit": "cwt",
+   "source": "US price x 1.05, Washington withheld"
+  }
+ },
+ "prices_today_span": "Jul to Sep 2026",
+ "validation": {
+  "verdict": "NOT TESTABLE (the model kept \"winter wheat, spring wheat, chickpeas\" in every window, so there was no switch to judge for a rotation grown here)",
+  "any_start_switches": 27,
+  "any_start_windows": 36,
+  "any_start_share_worst": 0.6666666666666666,
+  "any_start_share_mean": 0.8148148148148148,
+  "split": [
+   {
+    "strategy": "model (best climate-adjusted bad year)",
+    "picked": "current",
+    "test_years": "2017-2025",
+    "test_bad_year": 51.6,
+    "test_worst_year": 14.0,
+    "test_mean": 109.7
+   },
+   {
+    "strategy": "keep current rotation",
+    "picked": "current",
+    "test_years": "2017-2025",
+    "test_bad_year": 51.6,
+    "test_worst_year": 14.0,
+    "test_mean": 109.7
+   },
+   {
+    "strategy": "chase the best typical year",
+    "picked": "lentils",
+    "test_years": "2017-2025",
+    "test_bad_year": 58.7,
+    "test_worst_year": 37.1,
+    "test_mean": 105.8
+   },
+   {
+    "strategy": "copy last year's best option",
+    "picked": "current",
+    "test_years": "2017-2025",
+    "test_bad_year": 51.6,
+    "test_worst_year": 14.0,
+    "test_mean": 109.7
+   },
+   {
+    "strategy": "copy what most neighbors grew",
+    "picked": "current",
+    "test_years": "2017-2025",
+    "test_bad_year": 51.6,
+    "test_worst_year": 14.0,
+    "test_mean": 109.7
+   }
+  ],
+  "verdict_rule": "Share of switches that matched or beat staying put on the worst year: 60% or more SUPPORTED, 40% or less NOT SUPPORTED, in between MIXED. Counted twice: from every full-record starting rotation, and only from starts that are the farmer's own or cover at least 1% of the ground near the pin (a field counts only when it shows two full turns of the rotation). If the two counts disagree the verdict is MIXED. If the model never told a farmer on a rotation grown here to switch, the verdict is NOT TESTABLE.",
+  "verdict_plain": "Not testable here: the model kept \"winter wheat, spring wheat, chickpeas\" in every window, so there was no switch to judge for a rotation grown here.",
+  "verdict_all_starts": "SUPPORTED",
+  "verdict_grown_here": "NOT TESTABLE",
+  "grown_here": {
+   "starts": [
+    "current"
+   ],
+   "windows": 9,
+   "switches": 0,
+   "share_worst": null,
+   "share_bad": null,
+   "share_mean": null
+  },
+  "by_start": [
+   {
+    "start": "barley",
+    "label": "Swap chickpeas for barley",
+    "twin_near_pct": 0.0,
+    "grown_here": false,
+    "windows": 9,
+    "switches": 9,
+    "share_worst": 0.6666666666666666,
+    "share_bad": 0.6666666666666666,
+    "share_mean": 0.5555555555555556
+   },
+   {
+    "start": "current",
+    "label": "Keep chickpeas (current)",
+    "twin_near_pct": 16.3,
+    "grown_here": true,
+    "windows": 9,
+    "switches": 0,
+    "share_worst": null,
+    "share_bad": null,
+    "share_mean": null
+   },
+   {
+    "start": "lentils",
+    "label": "Swap chickpeas for lentils",
+    "twin_near_pct": 0.0,
+    "grown_here": false,
+    "windows": 9,
+    "switches": 9,
+    "share_worst": 0.3333333333333333,
+    "share_bad": 0.3333333333333333,
+    "share_mean": 0.8888888888888888
+   },
+   {
+    "start": "peas",
+    "label": "Swap chickpeas for dry peas",
+    "twin_near_pct": 0.0,
+    "grown_here": false,
+    "windows": 9,
+    "switches": 9,
+    "share_worst": 1.0,
+    "share_bad": 1.0,
+    "share_mean": 1.0
+   }
+  ],
+  "model_picks": {
+   "current": 9
+  }
+ },
+ "sensitivity": {
+  "pulse_breakeven": 0.36157782672644323,
+  "flip_to": "barley",
+  "leader_yield_sensitivity": [
+   {
+    "priority": "steady",
+    "prices": "today",
+    "leader": "lentils",
+    "leader_label": "Swap chickpeas for lentils",
+    "runner_up": "barley",
+    "gap": 2.2,
+    "tie": true,
+    "state_average_crops": [
+     "L"
+    ],
+    "flips_to": "barley",
+    "tie_at_yield_factor": 1.0,
+    "lead_lost_at_yield_factor": 0.955,
+    "measured_local_ratios": {
+     "WW": 1.23,
+     "SW": 1.06,
+     "B": 1.093
+    },
+    "at_measured_local_ratios": [
+     {
+      "crop": "WW",
+      "factor": 1.23,
+      "what": "county yield / Washington yield",
+      "years": 30,
+      "pick": "lentils",
+      "runner_up": "barley",
+      "tie": false,
+      "gap": 13.9
+     },
+     {
+      "crop": "SW",
+      "factor": 1.06,
+      "what": "county yield / Washington yield",
+      "years": 30,
+      "pick": "lentils",
+      "runner_up": "barley",
+      "tie": true,
+      "gap": 5.3
+     },
+     {
+      "crop": "B",
+      "factor": 1.093,
+      "what": "county yield / Washington yield",
+      "years": 28,
+      "pick": "lentils",
+      "runner_up": "barley",
+      "tie": true,
+      "gap": 7.0
+     }
+    ],
+    "plain": "\"winter wheat, spring wheat, lentils\" comes out on top for steady income at today's prices, and for lentils it uses Washington-average harvests, not local ones. It is already too close to call. With those harvests 5% lower, \"winter wheat, spring wheat, barley\" is on top. Here, winter wheat runs 23% above the Washington average, spring wheat 6% above and barley 9% above. If lentils did the same, \"winter wheat, spring wheat, lentils\" would stay on top, though in some cases within $10 an acre of \"winter wheat, spring wheat, barley\".",
+    "how": "Only the listed crops' yields are multiplied by the factor (1.0 = the Washington average), in every option that grows them; recommend.py then ranks again. Scanned from 1.000 down to 0.300 in steps of 0.001. tie_at_yield_factor is the highest factor at which the top two are within the tie line or the top row changes; lead_lost_at_yield_factor the highest at which another option is on top. null means it does not happen down to 0.300.",
+    "same_years_check": {
+     "years": [
+      2005,
+      2025
+     ],
+     "n_years": 21,
+     "all_years": 21,
+     "short_record_crops": [],
+     "pick": "lentils",
+     "runner_up": "barley",
+     "gap": 2.2,
+     "tie": true,
+     "changes_pick": false,
+     "changes_tie": false,
+     "how": "recommend.py ranks every option again with the file's years cut to the years the top row has numbers for (years, n_years); nothing else changes. changes_tie is true when 'too close to call' differs from the all-years answer, changes_pick when another option is on top."
+    }
+   },
+   {
+    "priority": "typical",
+    "prices": "today",
+    "leader": "canola",
+    "leader_label": "Swap chickpeas for canola",
+    "runner_up": "current",
+    "gap": 32.5,
+    "tie": false,
+    "state_average_crops": [
+     "K"
+    ],
+    "flips_to": "current",
+    "tie_at_yield_factor": 0.77,
+    "lead_lost_at_yield_factor": 0.669,
+    "measured_local_ratios": {
+     "WW": 1.23,
+     "SW": 1.06,
+     "B": 1.093
+    },
+    "at_measured_local_ratios": [
+     {
+      "crop": "WW",
+      "factor": 1.23,
+      "what": "county yield / Washington yield",
+      "years": 30,
+      "pick": "canola",
+      "runner_up": "current",
+      "tie": false,
+      "gap": 56.7
+     },
+     {
+      "crop": "SW",
+      "factor": 1.06,
+      "what": "county yield / Washington yield",
+      "years": 30,
+      "pick": "canola",
+      "runner_up": "current",
+      "tie": false,
+      "gap": 38.8
+     },
+     {
+      "crop": "B",
+      "factor": 1.093,
+      "what": "county yield / Washington yield",
+      "years": 28,
+      "pick": "canola",
+      "runner_up": "current",
+      "tie": false,
+      "gap": 42.3
+     }
+    ],
+    "plain": "\"winter wheat, spring wheat, canola\" comes out on top for the best typical year at today's prices, and for spring canola it uses Washington-average harvests, not local ones. With those harvests 23% lower it is too close to call. With them 33% lower, \"winter wheat, spring wheat, chickpeas\" is on top. Here, winter wheat runs 23% above the Washington average, spring wheat 6% above and barley 9% above. If spring canola did the same, \"winter wheat, spring wheat, canola\" would stay on top.",
+    "how": "Only the listed crops' yields are multiplied by the factor (1.0 = the Washington average), in every option that grows them; recommend.py then ranks again. Scanned from 1.000 down to 0.300 in steps of 0.001. tie_at_yield_factor is the highest factor at which the top two are within the tie line or the top row changes; lead_lost_at_yield_factor the highest at which another option is on top. null means it does not happen down to 0.300.",
+    "same_years_check": {
+     "years": [
+      2011,
+      2025
+     ],
+     "n_years": 15,
+     "all_years": 21,
+     "short_record_crops": [
+      "K"
+     ],
+     "pick": "canola",
+     "runner_up": "current",
+     "gap": 16.1,
+     "tie": false,
+     "changes_pick": false,
+     "changes_tie": false,
+     "how": "recommend.py ranks every option again with the file's years cut to the years the top row has numbers for (years, n_years); nothing else changes. changes_tie is true when 'too close to call' differs from the all-years answer, changes_pick when another option is on top."
+    }
+   }
+  ]
+ },
+ "field": {
+  "id": "pullman",
+  "county": "Whitman",
+  "state": "WA",
+  "pin": {
+   "lat": 46.86,
+   "lon": -117.3
+  }
+ },
+ "notes": [],
+ "hot_dry_signal": {
+  "water": "rain_spring_mm",
+  "water_label": "rain from March to June",
+  "heat": "heat_junjul_c",
+  "heat_label": "the average daily high in June and July",
+  "correlation_with_wheat_yield": 0.549,
+  "share_of_years": 0.25,
+  "text": "Hot, dry years are the 5 years of 21 with the lowest rain from March to June together with the most June and July heat. That is the water measure that tracks winter wheat yields best here."
+ },
+ "weather": [
+  {
+   "year": 2005,
+   "rain_fall_mm": 137.82,
+   "rain_winter_mm": 106.51,
+   "rain_spring_mm": 212.62,
+   "heat_junjul_c": 34.565,
+   "soilwet_junjul": 0.545,
+   "frost_days_aprmay": 6
+  },
+  {
+   "year": 2006,
+   "rain_fall_mm": 143.72,
+   "rain_winter_mm": 287.92,
+   "rain_spring_mm": 213.94,
+   "heat_junjul_c": 35.33,
+   "soilwet_junjul": 0.62,
+   "frost_days_aprmay": 9
+  },
+  {
+   "year": 2007,
+   "rain_fall_mm": 228.44,
+   "rain_winter_mm": 195.54,
+   "rain_spring_mm": 154.59,
+   "heat_junjul_c": 33.63,
+   "soilwet_junjul": 0.575,
+   "frost_days_aprmay": 9
+  },
+  {
+   "year": 2008,
+   "rain_fall_mm": 120.49,
+   "rain_winter_mm": 287.99,
+   "rain_spring_mm": 178.5,
+   "heat_junjul_c": 33.355,
+   "soilwet_junjul": 0.615,
+   "frost_days_aprmay": 22
+  },
+  {
+   "year": 2009,
+   "rain_fall_mm": 131.62,
+   "rain_winter_mm": 242.34,
+   "rain_spring_mm": 231.53,
+   "heat_junjul_c": 31.915,
+   "soilwet_junjul": 0.595,
+   "frost_days_aprmay": 13
+  },
+  {
+   "year": 2010,
+   "rain_fall_mm": 113.58,
+   "rain_winter_mm": 157.13,
+   "rain_spring_mm": 259.84,
+   "heat_junjul_c": 30.985,
+   "soilwet_junjul": 0.625,
+   "frost_days_aprmay": 15
+  },
+  {
+   "year": 2011,
+   "rain_fall_mm": 180.82,
+   "rain_winter_mm": 273.79,
+   "rain_spring_mm": 308.19,
+   "heat_junjul_c": 29.39,
+   "soilwet_junjul": 0.715,
+   "frost_days_aprmay": 19
+  },
+  {
+   "year": 2012,
+   "rain_fall_mm": 122.02,
+   "rain_winter_mm": 217.1,
+   "rain_spring_mm": 347.69,
+   "heat_junjul_c": 30.79,
+   "soilwet_junjul": 0.68,
+   "frost_days_aprmay": 10
+  },
+  {
+   "year": 2013,
+   "rain_fall_mm": 179.25,
+   "rain_winter_mm": 198.15,
+   "rain_spring_mm": 188.24,
+   "heat_junjul_c": 34.15,
+   "soilwet_junjul": 0.59,
+   "frost_days_aprmay": 15
+  },
+  {
+   "year": 2014,
+   "rain_fall_mm": 157.17,
+   "rain_winter_mm": 204.77,
+   "rain_spring_mm": 241.05,
+   "heat_junjul_c": 32.23,
+   "soilwet_junjul": 0.585,
+   "frost_days_aprmay": 8
+  },
+  {
+   "year": 2015,
+   "rain_fall_mm": 142.75,
+   "rain_winter_mm": 221.16,
+   "rain_spring_mm": 150.49,
+   "heat_junjul_c": 38.42,
+   "soilwet_junjul": 0.53,
+   "frost_days_aprmay": 10
+  },
+  {
+   "year": 2016,
+   "rain_fall_mm": 116.3,
+   "rain_winter_mm": 267.68,
+   "rain_spring_mm": 209.64,
+   "heat_junjul_c": 34.225,
+   "soilwet_junjul": 0.58,
+   "frost_days_aprmay": 0
+  },
+  {
+   "year": 2017,
+   "rain_fall_mm": 231.85,
+   "rain_winter_mm": 244.53,
+   "rain_spring_mm": 284.4,
+   "heat_junjul_c": 32.225,
+   "soilwet_junjul": 0.645,
+   "frost_days_aprmay": 7
+  },
+  {
+   "year": 2018,
+   "rain_fall_mm": 198.42,
+   "rain_winter_mm": 261.98,
+   "rain_spring_mm": 219.64,
+   "heat_junjul_c": 31.42,
+   "soilwet_junjul": 0.625,
+   "frost_days_aprmay": 6
+  },
+  {
+   "year": 2019,
+   "rain_fall_mm": 113.3,
+   "rain_winter_mm": 235.12,
+   "rain_spring_mm": 158.11,
+   "heat_junjul_c": 32.025,
+   "soilwet_junjul": 0.565,
+   "frost_days_aprmay": 4
+  },
+  {
+   "year": 2020,
+   "rain_fall_mm": 105.12,
+   "rain_winter_mm": 245.04,
+   "rain_spring_mm": 219.03,
+   "heat_junjul_c": 33.505,
+   "soilwet_junjul": 0.61,
+   "frost_days_aprmay": 11
+  },
+  {
+   "year": 2021,
+   "rain_fall_mm": 161.05,
+   "rain_winter_mm": 221.5,
+   "rain_spring_mm": 60.11,
+   "heat_junjul_c": 42.01,
+   "soilwet_junjul": 0.495,
+   "frost_days_aprmay": 10
+  },
+  {
+   "year": 2022,
+   "rain_fall_mm": 173.97,
+   "rain_winter_mm": 210.6,
+   "rain_spring_mm": 270.37,
+   "heat_junjul_c": 34.815,
+   "soilwet_junjul": 0.7,
+   "frost_days_aprmay": 18
+  },
+  {
+   "year": 2023,
+   "rain_fall_mm": 172.0,
+   "rain_winter_mm": 169.63,
+   "rain_spring_mm": 168.05,
+   "heat_junjul_c": 33.63,
+   "soilwet_junjul": 0.555,
+   "frost_days_aprmay": 15
+  },
+  {
+   "year": 2024,
+   "rain_fall_mm": 128.65,
+   "rain_winter_mm": 236.88,
+   "rain_spring_mm": 174.74,
+   "heat_junjul_c": 34.805,
+   "soilwet_junjul": 0.57,
+   "frost_days_aprmay": 9
+  },
+  {
+   "year": 2025,
+   "rain_fall_mm": 165.78,
+   "rain_winter_mm": 230.08,
+   "rain_spring_mm": 158.17,
+   "heat_junjul_c": 34.085,
+   "soilwet_junjul": 0.555,
+   "frost_days_aprmay": 11
+  }
+ ],
+ "gap_lines": {
+  "yield_method": null,
+  "yield_basis": "The winter wheat, spring wheat, lentils rotation is on top for steady income at today's prices, but it is too close to call. For lentils it uses Washington-average harvests, not local ones, and with them 5% lower the winter wheat, spring wheat, barley rotation is on top.",
+  "past_years_test": "In every past-years test the method picked the winter wheat, spring wheat, chickpeas rotation. So a farmer already growing it was never told to switch, and the test has no switch from it to judge.",
+  "test_windows": "The 67% of switches that held up in the worst year all started from rotations that no mapped field near the pin has run twice in a row. So it does not test advice a farmer here could have followed."
+ },
+ "gap_lines_detail": {
+  "yield_method": null,
+  "yield_basis": "\"winter wheat, spring wheat, lentils\" comes out on top for steady income at today's prices, and for lentils it uses Washington-average harvests, not local ones. It is already too close to call. With those harvests 5% lower, \"winter wheat, spring wheat, barley\" is on top. Here, winter wheat runs 23% above the Washington average, spring wheat 6% above and barley 9% above. If lentils did the same, \"winter wheat, spring wheat, lentils\" would stay on top, though in some cases within $10 an acre of \"winter wheat, spring wheat, barley\".",
+  "past_years_test": "The past-years test is not testable here: the model kept \"winter wheat, spring wheat, chickpeas\" in every window, so there was no switch to judge for a rotation grown here.",
+  "test_windows": "The 67% of switches that held up in the worst year comes only from starting rotations that no mapped field near the pin has run twice in a row, and from test windows that overlap. It is not a test of advice a farmer here could have followed."
+ }
+}

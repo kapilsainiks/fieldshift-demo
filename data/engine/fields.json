@@ -1,0 +1,92 @@
+{
+ "note": "The two study fields the money engine covers. A pinned field uses the engine file for its county.",
+ "fields": [
+  {
+   "id": "ritzville",
+   "county": "Adams",
+   "label": "Ritzville sample farm",
+   "blurb": "Dry country: about 12 inches of rain a year. Wheat one year, rest the next.",
+   "pin": [
+    -118.478,
+    47.1656
+   ],
+   "town": "Ritzville, WA",
+   "engine": "data/engine/ritzville.json",
+   "baseline_crop": "WW",
+   "cost_source": "WSU 2013 budgets for under 12 inches of rain; spring wheat and peas from wetter-ground budgets",
+   "gaps": [
+    "Winter wheat and spring wheat harvests after 2007 are estimates, because USDA stopped reporting Adams County dryland fields on their own. They are set at the usual gaps up to 2007, which may have changed since: winter wheat about 13% below the county's all-fields harvest (2024: about 29% below the Washington average), and spring wheat about 33% below the Washington average.",
+    "Pea and canola harvests are Washington averages, because USDA publishes no Adams County numbers for them. Harvests near Ritzville are likely lower.",
+    "Peas in USDA's numbers are mostly spring-sown. The WSU trial near Ritzville grows fall-sown winter peas, which USDA does not report on their own.",
+    "Canola has only been tracked since 2011, so it is left out of the past-years test and its numbers rest on 15 years, not 21. Its cost is for winter canola; its harvests mix winter and spring canola.",
+    "Costs are 2013 budgets (2016 for peas) raised only by general inflation. Fertilizer, fuel and seed have moved differently, and your own costs will differ.",
+    "The spring wheat and pea costs were written for wetter ground, so they may be too high for Ritzville.",
+    "The soil score does not count bare ground in a rest year, so it is too kind to rotations with more rest.",
+    "Hot, dry years here are picked on June and July soil moisture and heat, not spring rain alone.",
+    "The canola, rest, wheat, rest rotation is only just on top for steady income at today's prices: for canola it uses Washington-average harvests, and with them 20% lower the wheat, then rest rotation is on top. Compared only on the 15 years canola has harvest numbers for, its lead for the best typical year is too close to call.",
+    "In every past-years test the method picked the wheat, then rest rotation. So a farmer already growing it was never told to switch, and the test has no switch from it to judge.",
+    "The 70% of switches that held up in the worst year all started from rotations that no mapped field near the pin has run twice in a row. So it does not test advice a farmer here could have followed."
+   ],
+   "engine_pin": [
+    -118.473225,
+    47.16394
+   ],
+   "gaps_from_engine": [
+    "Winter wheat and spring wheat harvests after 2007 are estimates, because USDA stopped reporting Adams County dryland fields on their own. They are set at the usual gaps up to 2007, which may have changed since: winter wheat about 13% below the county's all-fields harvest (2024: about 29% below the Washington average), and spring wheat about 33% below the Washington average.",
+    "The canola, rest, wheat, rest rotation is only just on top for steady income at today's prices: for canola it uses Washington-average harvests, and with them 20% lower the wheat, then rest rotation is on top. Compared only on the 15 years canola has harvest numbers for, its lead for the best typical year is too close to call.",
+    "In every past-years test the method picked the wheat, then rest rotation. So a farmer already growing it was never told to switch, and the test has no switch from it to judge.",
+    "The 70% of switches that held up in the worst year all started from rotations that no mapped field near the pin has run twice in a row. So it does not test advice a farmer here could have followed."
+   ],
+   "gaps_detail": [
+    "Winter wheat and spring wheat harvests are Adams County dryland numbers from USDA up to 2007, the last year USDA reported dryland fields on their own. After that, winter wheat is the county all-fields harvest x 0.866 (2024: the Washington harvest x 0.715), and spring wheat is the Washington harvest x 0.674. Each factor is the usual gap in the years USDA published both numbers. Those gaps may have changed since.",
+    "\"canola, rest, wheat, rest\" comes out on top for steady income at today's prices, and for canola it uses Washington-average harvests, not local ones. With those harvests 0.3% lower it is too close to call. With them 20% lower, \"wheat, then rest\" is on top. Here, winter wheat runs 29% below the Washington average and spring wheat 33% below. If canola did the same, \"wheat, then rest\" would be on top, though within $10 an acre of \"canola, rest, wheat, rest\". Compared only on the 15 years the top row has numbers for (2011 to 2025), \"canola, rest, wheat, rest\" is on top for the best typical year at today's prices and \"wheat, then rest\" is $9.1 an acre behind, which is too close to call; on all 21 years \"canola, rest, wheat, rest\" leads by $17.0.",
+    "The past-years test is not testable here: the model kept \"wheat, then rest\" in every window, so there was no switch to judge for a rotation grown here.",
+    "The 70% of switches that held up in the worst year comes only from starting rotations that no mapped field near the pin has run twice in a row, and from test windows that overlap. It is not a test of advice a farmer here could have followed."
+   ]
+  },
+  {
+   "id": "pullman",
+   "county": "Whitman",
+   "label": "Pullman sample farm",
+   "blurb": "Wetter country: about 20 inches of rain a year. Winter wheat, spring wheat, then chickpeas.",
+   "pin": [
+    -117.3,
+    46.86
+   ],
+   "town": "Pullman, WA",
+   "engine": "data/engine/pullman.json",
+   "baseline_crop": "CP",
+   "cost_source": "University of Idaho enterprise budgets for the high-rainfall zone (2016 prices)",
+   "gaps": [
+    "Pea, lentil, chickpea and canola harvests are Washington averages, not this county's.",
+    "Canola has only been tracked since 2011, so it is left out of the past-years test.",
+    "Costs are 2016 University of Idaho budgets raised only by general inflation. Fertilizer, fuel and seed have moved differently, and your own costs will differ.",
+    "The winter wheat, spring wheat, lentils rotation is on top for steady income at today's prices, but it is too close to call. For lentils it uses Washington-average harvests, not local ones, and with them 5% lower the winter wheat, spring wheat, barley rotation is on top.",
+    "In every past-years test the method picked the winter wheat, spring wheat, chickpeas rotation. So a farmer already growing it was never told to switch, and the test has no switch from it to judge.",
+    "The 67% of switches that held up in the worst year all started from rotations that no mapped field near the pin has run twice in a row. So it does not test advice a farmer here could have followed."
+   ],
+   "engine_pin": [
+    -117.3,
+    46.86
+   ],
+   "gaps_from_engine": [
+    "The winter wheat, spring wheat, lentils rotation is on top for steady income at today's prices, but it is too close to call. For lentils it uses Washington-average harvests, not local ones, and with them 5% lower the winter wheat, spring wheat, barley rotation is on top.",
+    "In every past-years test the method picked the winter wheat, spring wheat, chickpeas rotation. So a farmer already growing it was never told to switch, and the test has no switch from it to judge.",
+    "The 67% of switches that held up in the worst year all started from rotations that no mapped field near the pin has run twice in a row. So it does not test advice a farmer here could have followed."
+   ],
+   "gaps_detail": [
+    "\"winter wheat, spring wheat, lentils\" comes out on top for steady income at today's prices, and for lentils it uses Washington-average harvests, not local ones. It is already too close to call. With those harvests 5% lower, \"winter wheat, spring wheat, barley\" is on top. Here, winter wheat runs 23% above the Washington average, spring wheat 6% above and barley 9% above. If lentils did the same, \"winter wheat, spring wheat, lentils\" would stay on top, though in some cases within $10 an acre of \"winter wheat, spring wheat, barley\".",
+    "The past-years test is not testable here: the model kept \"winter wheat, spring wheat, chickpeas\" in every window, so there was no switch to judge for a rotation grown here.",
+    "The 67% of switches that held up in the worst year comes only from starting rotations that no mapped field near the pin has run twice in a row, and from test windows that overlap. It is not a test of advice a farmer here could have followed."
+   ]
+  }
+ ],
+ "crop_codes": {
+  "Wheat": "WW",
+  "Barley": "B",
+  "Peas": "P",
+  "Lentils": "L",
+  "Chickpeas": "CP",
+  "Canola": "K"
+ }
+}

@@ -1,0 +1,875 @@
+{
+ "source": "NASA NEX-GDDP-CMIP6",
+ "source_url": "https://www.nccs.nasa.gov/services/data-collections/land-based-products/nex-gddp-cmip6",
+ "data_url": "https://nex-gddp-cmip6.s3.us-west-2.amazonaws.com/NEX-GDDP-CMIP6/",
+ "accessed": "2026-11-14",
+ "baseline_years": [
+  1981,
+  2014
+ ],
+ "future_years": [
+  2040,
+  2059
+ ],
+ "dry_spring_definition": "A dry spring means April to June rain at or below the level reached by only the driest 1 in 5 springs of 1981 to 2014, in the same climate model, for the grid square (about 28 by 19 km) around each sample farm. The 8 models do not agree on whether dry springs get more or less common. Even with no change in rain, their middle value would usually land from about 2.5 to 6 in 20 years, so these numbers show no clear change.",
+ "dry_spring_definition_only": "A dry spring means April to June rain at or below the level reached by only the driest 1 in 5 springs of 1981 to 2014, in the same climate model, for the grid square (about 28 by 19 km) around each sample farm.",
+ "card_note": "The 8 models do not agree on whether dry springs get more or less common. Even with no change in rain, their middle value would usually land from about 2.5 to 6 in 20 years, so these numbers show no clear change.",
+ "plain_reading": "These 8 models give no clear sign that dry springs become more or less common at either field. If rain did not change at all, 8 models would still usually show a middle value between about 2.5 and 6 dry springs in 20 years, a lowest model between 0 and 3 and a highest model between 5 and 11. Every result here is inside those ranges.",
+ "models": [
+  "GFDL-ESM4",
+  "MPI-ESM1-2-HR",
+  "MRI-ESM2-0",
+  "IPSL-CM6A-LR",
+  "UKESM1-0-LL",
+  "ACCESS-CM2",
+  "MIROC6",
+  "CanESM5"
+ ],
+ "model_details": {
+  "GFDL-ESM4": {
+   "variant": "r1i1p1f1",
+   "grid": "gr1",
+   "calendar": "365_day",
+   "file_versions": [
+    "v2.0"
+   ]
+  },
+  "MPI-ESM1-2-HR": {
+   "variant": "r1i1p1f1",
+   "grid": "gn",
+   "calendar": "proleptic_gregorian",
+   "file_versions": [
+    "v2.0"
+   ]
+  },
+  "MRI-ESM2-0": {
+   "variant": "r1i1p1f1",
+   "grid": "gn",
+   "calendar": "proleptic_gregorian",
+   "file_versions": [
+    "v2.0"
+   ]
+  },
+  "IPSL-CM6A-LR": {
+   "variant": "r1i1p1f1",
+   "grid": "gr",
+   "calendar": "standard",
+   "file_versions": [
+    "v2.0"
+   ]
+  },
+  "UKESM1-0-LL": {
+   "variant": "r1i1p1f2",
+   "grid": "gn",
+   "calendar": "360_day",
+   "file_versions": [
+    "v2.0"
+   ]
+  },
+  "ACCESS-CM2": {
+   "variant": "r1i1p1f1",
+   "grid": "gn",
+   "calendar": "proleptic_gregorian",
+   "file_versions": [
+    "v2.0"
+   ]
+  },
+  "MIROC6": {
+   "variant": "r1i1p1f1",
+   "grid": "gn",
+   "calendar": "standard",
+   "file_versions": [
+    "v2.0"
+   ]
+  },
+  "CanESM5": {
+   "variant": "r1i1p1f1",
+   "grid": "gn",
+   "calendar": "365_day",
+   "file_versions": [
+    "v2.0"
+   ]
+  }
+ },
+ "models_planned": [
+  "GFDL-ESM4",
+  "MPI-ESM1-2-HR",
+  "MRI-ESM2-0",
+  "IPSL-CM6A-LR",
+  "UKESM1-0-LL",
+  "ACCESS-CM2",
+  "MIROC6",
+  "CanESM5",
+  "EC-Earth3",
+  "NorESM2-MM",
+  "CNRM-CM6-1",
+  "INM-CM5-0"
+ ],
+ "models_planned_not_fetched": [
+  "EC-Earth3",
+  "NorESM2-MM",
+  "CNRM-CM6-1",
+  "INM-CM5-0"
+ ],
+ "models_not_included": [
+  "EC-Earth3",
+  "NorESM2-MM",
+  "CNRM-CM6-1",
+  "INM-CM5-0"
+ ],
+ "models_not_included_reasons": {
+  "EC-Earth3": "planned but not downloaded: no rows in yearly_rain.csv",
+  "NorESM2-MM": "planned but not downloaded: no rows in yearly_rain.csv",
+  "CNRM-CM6-1": "planned but not downloaded: no rows in yearly_rain.csv",
+  "INM-CM5-0": "planned but not downloaded: no rows in yearly_rain.csv"
+ },
+ "method": "Daily precipitation (pr, kg m-2 s-1 times 86400 = mm per day) at the grid cell over each field, summed April to June for every year. The dry-spring line is the 20th percentile of each model's own 1981-2014 springs. It catches 7 of those 34 springs in every model, which is 4.1 in 20; the 'baseline' of 4 is that rate in round numbers. Counts are springs at or below that line in 2040-2059. With no change, a line drawn from 34 springs catches about 4.3 of 20 future springs, not 4. Rain change is the 2040-2059 mean against the 1981-2014 mean. Median, lowest and highest are across models. 'chance_only' holds what the same number of models shows when rain does not change (200000 random draws, seed 20261114).",
+ "chance_only": {
+  "what": "What 8 models would show if spring rain did not change at all between 1981-2014 and 2040-2059.",
+  "how": "200000 random draws with a fixed seed. Each draw gives every model 34 past and 20 future springs from one and the same rain distribution, draws the line the same way and counts the future springs at or below it. Springs are treated as independent from year to year and models as independent of each other. Ranges are 5th to 95th percentile.",
+  "draws": 200000,
+  "seed": 20261114,
+  "one_model": {
+   "expected_dry_springs": 4.34,
+   "expected_bounds_any_rain_distribution": [
+    4.0,
+    4.57
+   ],
+   "simulated_mean": 4.34,
+   "range_5_95": [
+    1,
+    8
+   ],
+   "chance_more_than_4": 0.44,
+   "chance_fewer_than_4": 0.39
+  },
+  "across_models": {
+   "n_models": 8,
+   "median_range_5_95": [
+    2.5,
+    6
+   ],
+   "lowest_range_5_95": [
+    0,
+    3
+   ],
+   "highest_range_5_95": [
+    5,
+    11
+   ],
+   "expected_lowest": 1.5,
+   "expected_highest": 7.8,
+   "expected_models_with_more_than_4": 3.5,
+   "expected_models_with_fewer_than_4": 3.1
+  },
+  "sensitivity_year_to_year_carry_over": {
+   "year_to_year_correlation_used": 0.34,
+   "why": "the highest year-to-year correlation in any model's own 1981-2014 springs here; applied to every model, so this is the wide case",
+   "seen_in_models_1981_2014": {
+    "median": -0.05,
+    "min": -0.14,
+    "max": 0.34
+   },
+   "one_model_range_5_95": [
+    1,
+    10
+   ],
+   "one_model_simulated_mean": 4.46,
+   "median_range_5_95": [
+    2.5,
+    6
+   ],
+   "lowest_range_5_95": [
+    0,
+    3
+   ],
+   "highest_range_5_95": [
+    6,
+    13
+   ]
+  }
+ },
+ "rain_amount_check": {
+  "note": "Model rain amounts (every key that starts with model_ and ends with _mm) are rain inside the climate model's grid square. They are not rain at the field. Do not show them next to gauge or NASA POWER rain. The dry-spring counts do not depend on them, because each model is compared with itself.",
+  "fields": {
+   "ritzville": {
+    "months": "April to June",
+    "model_mean_mm_1981_2014": {
+     "min": 58.1,
+     "max": 63.9
+    },
+    "nasa_power_at_pin_mm_1981_2014": 73.9,
+    "nasa_power_year_mm_1981_2014": 324.7,
+    "noaa_gauge": {
+     "station": "USC00457059",
+     "name": "RITZVILLE 1 SSE, WA US",
+     "lat": 47.1175,
+     "lon": -118.3714,
+     "km_from_field_pin": 9.3,
+     "inside_model_grid_square": true,
+     "normal_mm_1991_2020": 77.2,
+     "year_normal_mm_1991_2020": 323.8,
+     "year_normal_in_1991_2020": 12.75,
+     "models_against_gauge_pct": {
+      "min": -25,
+      "max": -17
+     }
+    }
+   },
+   "pullman": {
+    "months": "April to June",
+    "model_mean_mm_1981_2014": {
+     "min": 107.6,
+     "max": 118.1
+    },
+    "nasa_power_at_pin_mm_1981_2014": 151.1,
+    "nasa_power_year_mm_1981_2014": 646.8,
+    "noaa_gauge": {
+     "station": "USC00456789",
+     "name": "PULLMAN 2 NW, WA US",
+     "lat": 46.7603,
+     "lon": -117.1861,
+     "km_from_field_pin": 14.1,
+     "inside_model_grid_square": false,
+     "normal_mm_1991_2020": 126.7,
+     "year_normal_mm_1991_2020": 518.4,
+     "year_normal_in_1991_2020": 20.41,
+     "models_against_gauge_pct": {
+      "min": -15,
+      "max": -7
+     }
+    }
+   }
+  }
+ },
+ "caveats": [
+  "Only one 0.25 degree grid square (about 28 by 19 km) around each sample farm was run. Fields elsewhere in the same county are outside that square, and the sample farm's numbers stand in for them.",
+  "If rain did not change at all, 8 models would still usually show a middle value between about 2.5 and 6 dry springs in 20 years, a lowest model between 0 and 3 and a highest between 5 and 11 (each range holds at least 90 in 100 such cases). The line comes from only 34 past springs and is tested on only 20 future ones.",
+  "The past rate is about 4 in 20. With no change a model shows about 4.3 in 20 on average, so a little over 4 is not a sign of change.",
+  "One run per climate model. The chance ranges treat one spring as independent of the next.",
+  "This is rain only. It does not cover heat, snow, or how a crop uses the rain.",
+  "Each model is compared with its own 1981 to 2014 springs, not with rain gauges.",
+  "Ritzville: model April to June rain (58 to 64 mm) runs below the NOAA rain gauge (77 mm, 1991 to 2020 normal, inside the same grid square). Use the counts, not the mm.",
+  "Pullman: model April to June rain (108 to 118 mm) runs below the NOAA rain gauge (127 mm, 1991 to 2020 normal, 14 km from the field, outside the grid square). Use the counts, not the mm.",
+  "Yearly rain totals were not read (only March to June days were downloaded), so there is no annual rain change here.",
+  "12 models were planned and 8 are used. Not included: EC-Earth3, NorESM2-MM, CNRM-CM6-1, INM-CM5-0. They were not downloaded. They are the last ones in a fetch order that was fixed in fetch_future_rain.py."
+ ],
+ "fields": {
+  "ritzville": {
+   "place": "the Ritzville sample farm (47.16 N, 118.47 W)",
+   "county": "Adams",
+   "place_note": "Only that one grid square was run. For a field elsewhere in Adams County these are the sample farm's numbers, not that field's own.",
+   "dry_spring_definition": "A dry spring means April to June rain at or below the level reached by only the driest 1 in 5 springs of 1981 to 2014, in the same climate model, for the grid square (about 28 by 19 km) around the Ritzville sample farm (47.16 N, 118.47 W). The 8 models do not agree on whether dry springs get more or less common. Even with no change in rain, their middle value would usually land from about 2.5 to 6 in 20 years, so these numbers show no clear change.",
+   "dry_spring_definition_only": "A dry spring means April to June rain at or below the level reached by only the driest 1 in 5 springs of 1981 to 2014, in the same climate model, for the grid square (about 28 by 19 km) around the Ritzville sample farm (47.16 N, 118.47 W).",
+   "grid_cell_centre": {
+    "lat": 47.125,
+    "lon": -118.375
+   },
+   "grid_cell_km": {
+    "north_south": 27.8,
+    "east_west": 18.9
+   },
+   "field_pin_km_from_cell_centre": 8.6,
+   "most_dry_model": {
+    "model": "IPSL-CM6A-LR",
+    "dry_springs": {
+     "ssp245": 9,
+     "ssp585": 10
+    },
+    "at_least_in_every_path": 9,
+    "chance_some_model_this_high_in_every_path": 0.06,
+    "same_chance_with_year_to_year_carry_over": 0.17,
+    "spring_rain_change_pct": {
+     "ssp245": -13.0,
+     "ssp585": -12.5
+    }
+   },
+   "scenarios": {
+    "ssp245": {
+     "label": "Middle-of-the-road emissions",
+     "dry_springs_per_20yr": {
+      "baseline": 4,
+      "median": 3.5,
+      "min": 2,
+      "max": 9,
+      "no_change_expected": 4.3,
+      "chance_only_median_range": [
+       2.5,
+       6
+      ],
+      "chance_only_lowest_range": [
+       0,
+       3
+      ],
+      "chance_only_highest_range": [
+       5,
+       11
+      ],
+      "median_inside_chance_range": true,
+      "lowest_and_highest_inside_chance_range": true,
+      "chance_of_median_this_high": 0.83,
+      "chance_of_median_this_low": 0.32,
+      "chance_of_highest_this_high": 0.31,
+      "chance_of_lowest_this_low": 0.86
+     },
+     "reading": "No clear change. The middle value of 3.5 is inside the range that chance alone gives when rain does not change (2.5 to 6).",
+     "card_line": "The middle value across 8 climate models is 3.5 dry springs in 20 years (2040 to 2059); the models range from 2 to 9. In 1981 to 2014 it was about 4 in 20 by definition. That is no clear change: even if rain stayed exactly as it was, the middle would usually land from about 2.5 to 6, the lowest model from 0 to 3 and the highest from 5 to 11.",
+     "spring_rain_change_pct": {
+      "median": 6.0,
+      "min": -13.0,
+      "max": 13.4
+     },
+     "mar_jun_rain_change_pct": {
+      "median": 6.8,
+      "min": -4.9,
+      "max": 16.5
+     },
+     "models_with_more_than_4": 2,
+     "models_with_fewer_than_4": 4,
+     "chance_of_this_many_models_with_more_than_4": 0.93,
+     "chance_of_this_many_models_with_fewer_than_4": 0.38,
+     "models_above_one_model_chance_range": [
+      "IPSL-CM6A-LR"
+     ],
+     "models_below_one_model_chance_range": [],
+     "per_model": [
+      {
+       "model": "GFDL-ESM4",
+       "dry_springs": 4,
+       "spring_rain_change_pct": 12.3,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 51.5,
+       "model_baseline_spring_rain_mm": 61.6,
+       "model_future_spring_rain_mm": 69.2,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 11.2
+      },
+      {
+       "model": "MPI-ESM1-2-HR",
+       "dry_springs": 3,
+       "spring_rain_change_pct": 5.8,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 39.0,
+       "model_baseline_spring_rain_mm": 63.9,
+       "model_future_spring_rain_mm": 67.6,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 4.0
+      },
+      {
+       "model": "MRI-ESM2-0",
+       "dry_springs": 3,
+       "spring_rain_change_pct": 0.2,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 51.9,
+       "model_baseline_spring_rain_mm": 63.3,
+       "model_future_spring_rain_mm": 63.4,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 4.4
+      },
+      {
+       "model": "IPSL-CM6A-LR",
+       "dry_springs": 9,
+       "spring_rain_change_pct": -13.0,
+       "outside_one_model_chance_range": "above",
+       "model_dry_spring_line_mm": 48.4,
+       "model_baseline_spring_rain_mm": 59.6,
+       "model_future_spring_rain_mm": 51.8,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": -4.9
+      },
+      {
+       "model": "UKESM1-0-LL",
+       "dry_springs": 5,
+       "spring_rain_change_pct": 11.4,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 48.8,
+       "model_baseline_spring_rain_mm": 58.1,
+       "model_future_spring_rain_mm": 64.7,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 16.5
+      },
+      {
+       "model": "ACCESS-CM2",
+       "dry_springs": 3,
+       "spring_rain_change_pct": 13.4,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 47.6,
+       "model_baseline_spring_rain_mm": 61.4,
+       "model_future_spring_rain_mm": 69.7,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 7.9
+      },
+      {
+       "model": "MIROC6",
+       "dry_springs": 4,
+       "spring_rain_change_pct": 6.3,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 47.4,
+       "model_baseline_spring_rain_mm": 59.9,
+       "model_future_spring_rain_mm": 63.6,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 5.8
+      },
+      {
+       "model": "CanESM5",
+       "dry_springs": 2,
+       "spring_rain_change_pct": 5.6,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 46.6,
+       "model_baseline_spring_rain_mm": 58.7,
+       "model_future_spring_rain_mm": 62.0,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 11.7
+      }
+     ]
+    },
+    "ssp585": {
+     "label": "High emissions",
+     "dry_springs_per_20yr": {
+      "baseline": 4,
+      "median": 5.5,
+      "min": 1,
+      "max": 10,
+      "no_change_expected": 4.3,
+      "chance_only_median_range": [
+       2.5,
+       6
+      ],
+      "chance_only_lowest_range": [
+       0,
+       3
+      ],
+      "chance_only_highest_range": [
+       5,
+       11
+      ],
+      "median_inside_chance_range": true,
+      "lowest_and_highest_inside_chance_range": true,
+      "chance_of_median_this_high": 0.13,
+      "chance_of_median_this_low": 0.94,
+      "chance_of_highest_this_high": 0.15,
+      "chance_of_lowest_this_low": 0.54
+     },
+     "reading": "No clear change. The middle value of 5.5 is inside the range that chance alone gives when rain does not change (2.5 to 6).",
+     "card_line": "The middle value across 8 climate models is 5.5 dry springs in 20 years (2040 to 2059); the models range from 1 to 10. In 1981 to 2014 it was about 4 in 20 by definition. That is no clear change: even if rain stayed exactly as it was, the middle would usually land from about 2.5 to 6, the lowest model from 0 to 3 and the highest from 5 to 11.",
+     "spring_rain_change_pct": {
+      "median": -0.8,
+      "min": -12.5,
+      "max": 15.7
+     },
+     "mar_jun_rain_change_pct": {
+      "median": 4.7,
+      "min": -6.7,
+      "max": 19.6
+     },
+     "models_with_more_than_4": 5,
+     "models_with_fewer_than_4": 3,
+     "chance_of_this_many_models_with_more_than_4": 0.24,
+     "chance_of_this_many_models_with_fewer_than_4": 0.66,
+     "models_above_one_model_chance_range": [
+      "IPSL-CM6A-LR"
+     ],
+     "models_below_one_model_chance_range": [],
+     "per_model": [
+      {
+       "model": "GFDL-ESM4",
+       "dry_springs": 6,
+       "spring_rain_change_pct": 11.0,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 51.5,
+       "model_baseline_spring_rain_mm": 61.6,
+       "model_future_spring_rain_mm": 68.4,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 12.9
+      },
+      {
+       "model": "MPI-ESM1-2-HR",
+       "dry_springs": 2,
+       "spring_rain_change_pct": 2.6,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 39.0,
+       "model_baseline_spring_rain_mm": 63.9,
+       "model_future_spring_rain_mm": 65.6,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 8.4
+      },
+      {
+       "model": "MRI-ESM2-0",
+       "dry_springs": 6,
+       "spring_rain_change_pct": -2.8,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 51.9,
+       "model_baseline_spring_rain_mm": 63.3,
+       "model_future_spring_rain_mm": 61.5,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 1.4
+      },
+      {
+       "model": "IPSL-CM6A-LR",
+       "dry_springs": 10,
+       "spring_rain_change_pct": -12.5,
+       "outside_one_model_chance_range": "above",
+       "model_dry_spring_line_mm": 48.4,
+       "model_baseline_spring_rain_mm": 59.6,
+       "model_future_spring_rain_mm": 52.1,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": -6.7
+      },
+      {
+       "model": "UKESM1-0-LL",
+       "dry_springs": 7,
+       "spring_rain_change_pct": -3.7,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 48.8,
+       "model_baseline_spring_rain_mm": 58.1,
+       "model_future_spring_rain_mm": 56.0,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": -0.7
+      },
+      {
+       "model": "ACCESS-CM2",
+       "dry_springs": 3,
+       "spring_rain_change_pct": -2.7,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 47.6,
+       "model_baseline_spring_rain_mm": 61.4,
+       "model_future_spring_rain_mm": 59.8,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 1.9
+      },
+      {
+       "model": "MIROC6",
+       "dry_springs": 5,
+       "spring_rain_change_pct": 1.1,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 47.4,
+       "model_baseline_spring_rain_mm": 59.9,
+       "model_future_spring_rain_mm": 60.5,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 7.4
+      },
+      {
+       "model": "CanESM5",
+       "dry_springs": 1,
+       "spring_rain_change_pct": 15.7,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 46.6,
+       "model_baseline_spring_rain_mm": 58.7,
+       "model_future_spring_rain_mm": 67.9,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 19.6
+      }
+     ]
+    }
+   }
+  },
+  "pullman": {
+   "place": "the Pullman sample farm (46.86 N, 117.30 W)",
+   "county": "Whitman",
+   "place_note": "Only that one grid square was run. For a field elsewhere in Whitman County these are the sample farm's numbers, not that field's own.",
+   "dry_spring_definition": "A dry spring means April to June rain at or below the level reached by only the driest 1 in 5 springs of 1981 to 2014, in the same climate model, for the grid square (about 28 by 19 km) around the Pullman sample farm (46.86 N, 117.30 W). The 8 models do not agree on whether dry springs get more or less common. Even with no change in rain, their middle value would usually land from about 2.5 to 6 in 20 years, so these numbers show no clear change.",
+   "dry_spring_definition_only": "A dry spring means April to June rain at or below the level reached by only the driest 1 in 5 springs of 1981 to 2014, in the same climate model, for the grid square (about 28 by 19 km) around the Pullman sample farm (46.86 N, 117.30 W).",
+   "grid_cell_centre": {
+    "lat": 46.875,
+    "lon": -117.375
+   },
+   "grid_cell_km": {
+    "north_south": 27.8,
+    "east_west": 19.0
+   },
+   "field_pin_km_from_cell_centre": 5.9,
+   "most_dry_model": {
+    "model": "IPSL-CM6A-LR",
+    "dry_springs": {
+     "ssp245": 11,
+     "ssp585": 9
+    },
+    "at_least_in_every_path": 9,
+    "chance_some_model_this_high_in_every_path": 0.06,
+    "same_chance_with_year_to_year_carry_over": 0.17,
+    "spring_rain_change_pct": {
+     "ssp245": -12.6,
+     "ssp585": -14.2
+    }
+   },
+   "scenarios": {
+    "ssp245": {
+     "label": "Middle-of-the-road emissions",
+     "dry_springs_per_20yr": {
+      "baseline": 4,
+      "median": 3,
+      "min": 2,
+      "max": 11,
+      "no_change_expected": 4.3,
+      "chance_only_median_range": [
+       2.5,
+       6
+      ],
+      "chance_only_lowest_range": [
+       0,
+       3
+      ],
+      "chance_only_highest_range": [
+       5,
+       11
+      ],
+      "median_inside_chance_range": true,
+      "lowest_and_highest_inside_chance_range": true,
+      "chance_of_median_this_high": 0.95,
+      "chance_of_median_this_low": 0.17,
+      "chance_of_highest_this_high": 0.06,
+      "chance_of_lowest_this_low": 0.86
+     },
+     "reading": "No clear change. The middle value of 3 is inside the range that chance alone gives when rain does not change (2.5 to 6).",
+     "card_line": "The middle value across 8 climate models is 3 dry springs in 20 years (2040 to 2059); the models range from 2 to 11. In 1981 to 2014 it was about 4 in 20 by definition. That is no clear change: even if rain stayed exactly as it was, the middle would usually land from about 2.5 to 6, the lowest model from 0 to 3 and the highest from 5 to 11.",
+     "spring_rain_change_pct": {
+      "median": 7.5,
+      "min": -12.6,
+      "max": 15.1
+     },
+     "mar_jun_rain_change_pct": {
+      "median": 9.0,
+      "min": -5.1,
+      "max": 16.2
+     },
+     "models_with_more_than_4": 2,
+     "models_with_fewer_than_4": 5,
+     "chance_of_this_many_models_with_more_than_4": 0.93,
+     "chance_of_this_many_models_with_fewer_than_4": 0.16,
+     "models_above_one_model_chance_range": [
+      "IPSL-CM6A-LR"
+     ],
+     "models_below_one_model_chance_range": [],
+     "per_model": [
+      {
+       "model": "GFDL-ESM4",
+       "dry_springs": 4,
+       "spring_rain_change_pct": 11.0,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 99.4,
+       "model_baseline_spring_rain_mm": 113.4,
+       "model_future_spring_rain_mm": 125.9,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 10.2
+      },
+      {
+       "model": "MPI-ESM1-2-HR",
+       "dry_springs": 3,
+       "spring_rain_change_pct": 4.7,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 82.9,
+       "model_baseline_spring_rain_mm": 118.1,
+       "model_future_spring_rain_mm": 123.6,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 1.8
+      },
+      {
+       "model": "MRI-ESM2-0",
+       "dry_springs": 2,
+       "spring_rain_change_pct": 2.4,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 98.9,
+       "model_baseline_spring_rain_mm": 116.1,
+       "model_future_spring_rain_mm": 118.9,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 5.9
+      },
+      {
+       "model": "IPSL-CM6A-LR",
+       "dry_springs": 11,
+       "spring_rain_change_pct": -12.6,
+       "outside_one_model_chance_range": "above",
+       "model_dry_spring_line_mm": 91.1,
+       "model_baseline_spring_rain_mm": 109.8,
+       "model_future_spring_rain_mm": 96.0,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": -5.1
+      },
+      {
+       "model": "UKESM1-0-LL",
+       "dry_springs": 5,
+       "spring_rain_change_pct": 8.2,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 83.1,
+       "model_baseline_spring_rain_mm": 107.6,
+       "model_future_spring_rain_mm": 116.4,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 16.2
+      },
+      {
+       "model": "ACCESS-CM2",
+       "dry_springs": 2,
+       "spring_rain_change_pct": 15.1,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 87.0,
+       "model_baseline_spring_rain_mm": 113.8,
+       "model_future_spring_rain_mm": 130.9,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 10.7
+      },
+      {
+       "model": "MIROC6",
+       "dry_springs": 3,
+       "spring_rain_change_pct": 6.9,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 92.9,
+       "model_baseline_spring_rain_mm": 110.8,
+       "model_future_spring_rain_mm": 118.5,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 7.8
+      },
+      {
+       "model": "CanESM5",
+       "dry_springs": 2,
+       "spring_rain_change_pct": 9.3,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 88.6,
+       "model_baseline_spring_rain_mm": 109.2,
+       "model_future_spring_rain_mm": 119.3,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 15.5
+      }
+     ]
+    },
+    "ssp585": {
+     "label": "High emissions",
+     "dry_springs_per_20yr": {
+      "baseline": 4,
+      "median": 5,
+      "min": 1,
+      "max": 9,
+      "no_change_expected": 4.3,
+      "chance_only_median_range": [
+       2.5,
+       6
+      ],
+      "chance_only_lowest_range": [
+       0,
+       3
+      ],
+      "chance_only_highest_range": [
+       5,
+       11
+      ],
+      "median_inside_chance_range": true,
+      "lowest_and_highest_inside_chance_range": true,
+      "chance_of_median_this_high": 0.28,
+      "chance_of_median_this_low": 0.87,
+      "chance_of_highest_this_high": 0.31,
+      "chance_of_lowest_this_low": 0.54
+     },
+     "reading": "No clear change. The middle value of 5 is inside the range that chance alone gives when rain does not change (2.5 to 6).",
+     "card_line": "The middle value across 8 climate models is 5 dry springs in 20 years (2040 to 2059); the models range from 1 to 9. In 1981 to 2014 it was about 4 in 20 by definition. That is no clear change: even if rain stayed exactly as it was, the middle would usually land from about 2.5 to 6, the lowest model from 0 to 3 and the highest from 5 to 11.",
+     "spring_rain_change_pct": {
+      "median": 0.9,
+      "min": -14.2,
+      "max": 21.8
+     },
+     "mar_jun_rain_change_pct": {
+      "median": 4.6,
+      "min": -7.3,
+      "max": 23.6
+     },
+     "models_with_more_than_4": 5,
+     "models_with_fewer_than_4": 2,
+     "chance_of_this_many_models_with_more_than_4": 0.24,
+     "chance_of_this_many_models_with_fewer_than_4": 0.88,
+     "models_above_one_model_chance_range": [
+      "IPSL-CM6A-LR"
+     ],
+     "models_below_one_model_chance_range": [],
+     "per_model": [
+      {
+       "model": "GFDL-ESM4",
+       "dry_springs": 5,
+       "spring_rain_change_pct": 7.7,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 99.4,
+       "model_baseline_spring_rain_mm": 113.4,
+       "model_future_spring_rain_mm": 122.1,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 10.4
+      },
+      {
+       "model": "MPI-ESM1-2-HR",
+       "dry_springs": 4,
+       "spring_rain_change_pct": 1.5,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 82.9,
+       "model_baseline_spring_rain_mm": 118.1,
+       "model_future_spring_rain_mm": 119.8,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 4.5
+      },
+      {
+       "model": "MRI-ESM2-0",
+       "dry_springs": 7,
+       "spring_rain_change_pct": 1.2,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 98.9,
+       "model_baseline_spring_rain_mm": 116.1,
+       "model_future_spring_rain_mm": 117.4,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 4.7
+      },
+      {
+       "model": "IPSL-CM6A-LR",
+       "dry_springs": 9,
+       "spring_rain_change_pct": -14.2,
+       "outside_one_model_chance_range": "above",
+       "model_dry_spring_line_mm": 91.1,
+       "model_baseline_spring_rain_mm": 109.8,
+       "model_future_spring_rain_mm": 94.2,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": -7.3
+      },
+      {
+       "model": "UKESM1-0-LL",
+       "dry_springs": 5,
+       "spring_rain_change_pct": -3.7,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 83.1,
+       "model_baseline_spring_rain_mm": 107.6,
+       "model_future_spring_rain_mm": 103.6,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 1.4
+      },
+      {
+       "model": "ACCESS-CM2",
+       "dry_springs": 3,
+       "spring_rain_change_pct": -2.9,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 87.0,
+       "model_baseline_spring_rain_mm": 113.8,
+       "model_future_spring_rain_mm": 110.4,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 2.7
+      },
+      {
+       "model": "MIROC6",
+       "dry_springs": 5,
+       "spring_rain_change_pct": 0.7,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 92.9,
+       "model_baseline_spring_rain_mm": 110.8,
+       "model_future_spring_rain_mm": 111.6,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 8.2
+      },
+      {
+       "model": "CanESM5",
+       "dry_springs": 1,
+       "spring_rain_change_pct": 21.8,
+       "outside_one_model_chance_range": null,
+       "model_dry_spring_line_mm": 88.6,
+       "model_baseline_spring_rain_mm": 109.2,
+       "model_future_spring_rain_mm": 133.0,
+       "baseline_springs_at_or_below_line": 7,
+       "mar_jun_rain_change_pct": 23.6
+      }
+     ]
+    }
+   }
+  }
+ }
+}

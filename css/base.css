@@ -1,0 +1,319 @@
+/* Fieldproof: shared tokens and pieces. Each screen has its own file next to this one. */
+
+:root {
+  /* Page */
+  --ink: #182831;
+  --muted: #5b6770;
+  --paper: #faf9f3;
+  --navy: #102333;
+  --blue: #224acc;
+  --line: #e3e1d8;
+  --control-line: #857f72; /* 3:1 on white and on paper, so the edge of a control can be seen */
+
+  /* Verdict colors: always paired with words or a mark, never used alone */
+  --green: #2f6b1f;
+  --greenbg: #e6f2dc;
+  --amber: #7a4d05;
+  --amberbg: #fbeed3;
+  --red: #9b2c2c;
+  --redbg: #fbe5e5;
+
+  /* Plan screen */
+  --panel: #fcfcfc;
+  --espresso: #644a40;
+  --honey: #ffdfb5;
+  --stroke: #766e62;
+  --pea: #62449c;
+  --wheat: #855909;
+  --gain: #205b40;
+  --loss: #94382c;
+
+  /* Brand and focus */
+  --leaf: #9fd36b;
+  --focus: #f2b705;
+  --focus-ink: #102333;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Geist", system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+/* The hidden attribute must win over any display rule below. */
+[hidden] {
+  display: none !important;
+}
+
+a {
+  color: var(--blue);
+}
+
+.small {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Where a number came from. */
+.src {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Focus: amber ring with a dark inner ring, so it shows on light and dark ---------- */
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--focus-ink);
+}
+
+/* The router moves focus to <main> after each screen change. It is a place, not a control. */
+#screen:focus,
+#screen:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* A map fills its box, so its ring is drawn inside the edge. */
+.maplibregl-canvas:focus-visible {
+  outline-offset: -3px;
+  box-shadow: none;
+}
+
+/* ---------- Skip link ---------- */
+
+.skip {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 10;
+  padding: 10px 16px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+/* Shown by the router when a screen cannot load, and by the page when scripts are off. */
+.load-error,
+noscript p {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 16px;
+}
+
+/* ---------- Buttons ---------- */
+
+button,
+.btn {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 12px 18px;
+  border: 1px solid var(--control-line);
+  background: #fff;
+  color: var(--ink);
+  min-height: 44px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+button.primary,
+.btn.primary {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ---------- Form controls ---------- */
+
+input[type="text"],
+input[type="search"],
+input[type="number"],
+input:not([type]),
+select {
+  font: inherit;
+  color: var(--ink);
+  padding: 12px 14px;
+  border: 1px solid var(--control-line);
+  border-radius: 10px;
+  min-height: 44px;
+  background: #fff;
+}
+
+select {
+  width: 100%;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  accent-color: var(--blue);
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 44px;
+  accent-color: var(--blue);
+}
+
+/* ---------- Brand ---------- */
+
+.brand {
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.2px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.brand span {
+  color: var(--leaf);
+}
+
+/* ---------- App header (Fields, Plan and Proof): brand, then Fields, Plan, Proof ---------- */
+
+.apphead {
+  background: var(--navy);
+  color: #fff;
+  padding: 10px 28px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.apphead .brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.apphead nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.apphead nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #cfd8df;
+  text-decoration: none;
+}
+
+.apphead nav a:hover {
+  color: #fff;
+  background: #1d3a52;
+}
+
+/* The current page: lighter fill, bold text and a green underline. */
+.apphead nav a[aria-current="page"] {
+  background: #1d3a52;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--leaf);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 7px;
+}
+
+@media (max-width: 767px) {
+  .apphead {
+    padding: 8px 16px;
+    gap: 12px;
+  }
+}
+
+/* ---------- Maps ---------- */
+
+/* Map buttons keep MapLibre's own shape; the button rule above is for our buttons. */
+.maplibregl-ctrl button {
+  min-height: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* The small "i" that opens the map credits: grown to a 44px target. MapLibre sizes this box
+   without its padding (content-box), so 24px of text room plus 10px above and below makes 44px. */
+.maplibregl-ctrl-attrib.maplibregl-compact {
+  min-height: 24px;
+  padding: 10px 48px 10px 12px;
+  border-radius: 22px;
+}
+
+.maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show) {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0;
+}
+
+.maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-inner {
+  line-height: 24px;
+}
+
+/* ---------- Motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

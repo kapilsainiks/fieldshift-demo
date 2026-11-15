@@ -1,0 +1,353 @@
+/* Fields screen (#/fields), lifted from the approved mock _design/fields-a.html: the globe is the
+   page. Start: one question and one field over the globe. Arrived: one instruction over the aerial
+   photo. Found: the field's size in big type and a glass panel with the four answers.
+   Every rule is under .fa (the element js/finder.js mounts) or under the page's fields route, so it
+   cannot touch another screen. Tokens, the focus ring and reduced motion come from base.css. */
+
+/* The page is one dark sheet, and the app header stands on the globe. */
+body[data-route="fields"] { background: #02040b; }
+body[data-route="fields"] #screen { position: relative; }
+body[data-route="fields"] .apphead { position: absolute; z-index: 6; left: 0; right: 0; top: 0; background: transparent; padding: 12px 48px; }
+body[data-route="fields"] .apphead nav a { color: #e6eaed; }
+body[data-route="fields"] .apphead nav a:hover,
+body[data-route="fields"] .apphead nav a[aria-current="page"] { background: rgba(255, 255, 255, 0.14); color: #fff; }
+@media (max-width: 767px) {
+  body[data-route="fields"] .apphead { padding: 8px 16px; }
+}
+
+/* ---------- The screen ---------- */
+
+.fa {
+  --glass: rgba(9, 14, 20, 0.78);
+  --glass-line: rgba(255, 255, 255, 0.16);
+  --hair: rgba(255, 255, 255, 0.14);
+  --soft: #c8cfd5;          /* quiet text: 4.5:1 or better on the glass and on the shades */
+  --edge: 48px;             /* the home page's side margin */
+  /* clip, not hidden: nothing may scroll the screen sideways or down, not even a focus move */
+  position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; overflow: clip;
+  background: #02040b; color: #fff;
+}
+.fa :where(h1, .fa h2, .fa h3, .fa p, .fa ul, .fa fieldset) { margin: 0; padding: 0; }
+.fa ul { list-style: none; }
+.fa fieldset { border: 0; min-width: 0; }
+.fa button { font: inherit; }
+
+/* The header is the app header, unchanged in its links. Here it has no fill, so the globe reaches
+   the top edge as the photo does on the home page. */
+
+.fa .globe { position: absolute; inset: 0; }
+.fa .globe .maplibregl-canvas { outline-offset: -4px; }
+
+/* Shades. Each one keeps white text above 4.5:1 whatever the picture shows under it. */
+.fa .shade { position: absolute; inset: 0; z-index: 1; pointer-events: none; transition: opacity 0.5s ease; }
+.fa .shade-top { background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0, rgba(0, 0, 0, 0.62) 64px, rgba(0, 0, 0, 0) 170px); }
+.fa .shade-start { background: linear-gradient(90deg, rgba(2, 4, 11, 0.94) 0%, rgba(2, 4, 11, 0.9) 34%, rgba(2, 4, 11, 0.6) 52%, rgba(2, 4, 11, 0) 74%); }
+.fa .shade-low {
+  background:
+    radial-gradient(120% 90% at 0% 100%, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.6) 38%, rgba(0, 0, 0, 0) 66%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.5) 20%, rgba(0, 0, 0, 0) 46%);
+}
+/* Found: the words stand in a column on the left, so the left edge is shaded up to mid height. */
+.fa .shade-side {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.74) 0, rgba(0, 0, 0, 0.66) 330px, rgba(0, 0, 0, 0) 500px);
+  -webkit-mask-image: linear-gradient(0deg, #000 0, #000 58%, transparent 82%); mask-image: linear-gradient(0deg, #000 0, #000 58%, transparent 82%);
+}
+.fa:not([data-stage="found"]) .shade-side { opacity: 0; }
+.fa:not([data-stage="start"]) .shade-start { opacity: 0; }
+.fa[data-stage="start"] .shade-low { opacity: 0; }
+
+/* Things that come and go ease in and out. "off" also takes them out of the tab order. */
+.fa .piece { transition: opacity 0.28s ease, transform 0.28s ease, visibility 0s linear 0s; }
+.fa .piece.off { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; }
+
+/* ---------- Pills ---------- */
+
+.fa .pill, .fa .ghost, .fa .chip {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 999px; text-decoration: none; cursor: pointer; white-space: nowrap;
+}
+.fa .pill { min-height: 56px; padding: 14px 28px; background: #fff; color: #000; font-weight: 700; border: 1px solid #fff; }
+.fa .pill:hover { background: #e9edf0; }
+.fa .ghost { min-height: 52px; padding: 14px 24px; background: rgba(0, 0, 0, 0.45); color: #fff; border: 1px solid rgba(255, 255, 255, 0.75); }
+.fa .ghost:hover { background: rgba(0, 0, 0, 0.7); }
+.fa .chip { min-height: 44px; padding: 8px 18px; background: rgba(0, 0, 0, 0.4); color: #fff; border: 1px solid rgba(255, 255, 255, 0.5); font-size: 15px; }
+.fa .chip:hover { background: rgba(255, 255, 255, 0.16); border-color: #fff; }
+.fa .chip b { font-weight: 700; }
+.fa .chip .dim { color: var(--soft); }
+.fa .ico { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Start: the question and the one field ---------- */
+
+.fa .hero { position: absolute; z-index: 3; left: var(--edge); top: clamp(120px, 22%, 250px); width: clamp(600px, 47vw, 720px); max-width: calc(100% - 2 * var(--edge)); animation: rise 0.6s ease backwards; }
+.fa .hero.off { transform: translateY(-12px); }
+.fa .hero h1 { font-size: clamp(76px, 5.94vw, 90px); line-height: 1; font-weight: 500; letter-spacing: -0.034em; white-space: nowrap; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+.fa .hero .lede { margin-top: 16px; font-size: 19px; line-height: 1.45; max-width: 460px; color: #fff; }
+
+.fa .field {
+  position: relative; display: flex; align-items: stretch; height: 72px; margin-top: 30px; border-radius: 36px;
+  background: rgba(255, 255, 255, 0.13); border: 1px solid rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.fa .field:focus-within { background: rgba(255, 255, 255, 0.18); border-color: #fff; }
+.fa .seg { position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 0 0 30px; }
+.fa .seg + .seg::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; width: 1px; background: rgba(255, 255, 255, 0.28); }
+.fa .seg label { font-size: 13px; line-height: 1.2; color: var(--soft); }
+.fa .seg .entry { display: flex; align-items: baseline; gap: 6px; }
+.fa .seg input {
+  width: 100%; min-width: 0; min-height: 0; padding: 2px 0 0; border: 0; border-radius: 0; background: transparent;
+  color: #fff; font-size: 22px; line-height: 1.25; font-variant-numeric: tabular-nums; outline: none; box-shadow: none;
+}
+.fa .seg input::placeholder { color: #aeb7be; opacity: 1; }
+.fa .seg .unit { font-size: 15px; color: var(--soft); padding-right: 16px; }
+/* The ring for a focused part is drawn on the part, inside the pill. */
+.fa .seg:focus-within::after { content: ""; position: absolute; inset: 5px 4px 5px 6px; border-radius: 30px; border: 2px solid var(--focus); pointer-events: none; }
+.fa .seg[data-invalid="true"] label { color: #ffb4a8; }
+.fa .go {
+  flex: none; align-self: center; width: 52px; height: 52px; min-height: 0; margin: 0 10px; padding: 0; border: 0; border-radius: 50%;
+  background: #fff; color: #000; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.fa .go:hover { background: #e9edf0; }
+.fa .go .ico { width: 22px; height: 22px; stroke-width: 2; }
+
+.fa .town-list {
+  position: absolute; z-index: 7; left: 0; right: 0; top: calc(100% + 10px); max-height: 368px; overflow-y: auto; padding: 8px;
+  border-radius: 24px; background: #10161d; border: 1px solid rgba(255, 255, 255, 0.22); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+}
+.fa .town-list li { display: flex; align-items: baseline; gap: 8px; min-height: 44px; padding: 9px 20px; border-radius: 16px; font-size: 18px; cursor: pointer; }
+.fa .town-list li span { color: var(--soft); font-size: 15px; }
+.fa .town-list li:hover, .fa .town-list li[aria-selected="true"] { background: rgba(255, 255, 255, 0.16); }
+
+.fa .status { min-height: 24px; margin-top: 14px; padding-left: 30px; font-size: 15px; color: #fff; max-width: 540px; }
+.fa .status.bad { color: #ffb4a8; }
+.fa .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 14px; }
+.fa .row .lab { flex: none; width: 112px; font-size: 15px; color: var(--soft); }
+.fa[data-mode="town"] [data-way="town"], .fa[data-mode="land"] [data-way="land"] { display: none; }
+
+.fa .spin {
+  position: absolute; z-index: 3; right: var(--edge); bottom: 20px; min-height: 44px; padding: 8px 18px; font-size: 14px;
+  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.75); background: rgba(0, 0, 0, 0.45); color: #fff; cursor: pointer;
+}
+
+/* What the picture is and where it came from: one quiet line, like a photo credit. */
+.fa .credit { position: absolute; z-index: 2; left: var(--edge); bottom: 22px; font-size: 13px; color: #e6eaed; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9); }
+
+/* ---------- Arrived and found: top left ---------- */
+
+.fa .topleft { position: absolute; z-index: 4; left: var(--edge); top: 84px; display: flex; gap: 10px; max-width: calc(100% - 2 * var(--edge)); }
+.fa .topleft.off { transform: translateY(-8px); }
+.fa .glass {
+  background: var(--glass); border: 1px solid var(--glass-line);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5); backdrop-filter: blur(28px) saturate(1.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.fa .place {
+  display: inline-flex; align-items: center; gap: 12px; min-width: 0; min-height: 48px; padding: 6px 8px 6px 18px;
+  border-radius: 999px; color: #fff; cursor: pointer; font-size: 15px;
+}
+.fa .place .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.fa .place .verb { flex: none; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.14); font-size: 14px; }
+.fa .place:hover .verb { background: rgba(255, 255, 255, 0.26); }
+.fa .zoom { display: inline-flex; flex: none; border-radius: 999px; }
+.fa .zoom button { width: 48px; height: 48px; min-height: 0; padding: 0; border: 0; background: transparent; color: #fff; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.fa .zoom button:hover { background: rgba(255, 255, 255, 0.16); }
+.fa .zoom button + button { box-shadow: -1px 0 0 var(--hair); }
+
+/* ---------- The banner: big light type on the picture, bottom left, as on the home page ---------- */
+
+.fa .banner { position: absolute; z-index: 3; left: var(--edge); bottom: 64px; width: min(640px, calc(100% - 2 * var(--edge))); transition: opacity 0.28s ease, transform 0.28s ease, visibility 0s; }
+.fa .banner.off { transform: translateY(12px); }
+.fa .banner.swap > * { opacity: 0; }
+.fa .banner > * { transition: opacity 0.18s ease; }
+.fa .banner .eyebrow { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--leaf); margin-bottom: 14px; }
+.fa .banner h1 { font-size: 64px; line-height: 1.02; font-weight: 500; letter-spacing: -1.8px; text-wrap: balance; font-variant-numeric: tabular-nums; }
+.fa .banner h1:focus { outline: none; box-shadow: none; }
+.fa .banner .sub { margin-top: 14px; font-size: 19px; line-height: 1.45; max-width: 540px; color: #fff; text-wrap: balance; }
+.fa[data-stage="found"] .banner { width: min(400px, calc(100% - 520px)); }
+.fa[data-stage="found"] .banner h1 { font-size: 84px; letter-spacing: -3px; white-space: nowrap; }
+.fa[data-stage="found"] .sat { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+/* "How we know": the crop map and satellite lines, closed until asked for. */
+.fa .know { margin-top: 12px; max-width: 540px; }
+.fa .know > summary { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; font-size: 15px; font-weight: 500; color: #fff; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, 0.5); text-underline-offset: 4px; }
+.fa .know > summary::-webkit-details-marker { display: none; }
+.fa .know > summary::before { content: "+"; width: 12px; }
+.fa .know[open] > summary::before { content: "−"; }
+.fa .know > summary:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
+.fa .know-crop { font-size: 15px; line-height: 1.45; color: #fff; text-wrap: pretty; }
+.fa .know .sat { margin-top: 10px; }
+
+/* What NASA's satellites saw, year by year: tall bar, a crop; short bar, resting. */
+.fa .sat { display: flex; align-items: center; gap: 16px; margin-top: 20px; max-width: 540px; }
+.fa .sat-bars { flex: none; display: flex; align-items: flex-end; gap: 4px; height: 26px; }
+.fa .sat-bars i { display: block; width: 8px; border-radius: 2px; }
+.fa .sat-bars .grew { height: 26px; background: var(--leaf); }
+.fa .sat-bars .rested { height: 7px; background: rgba(255, 255, 255, 0.62); }
+.fa .sat p { font-size: 15px; line-height: 1.4; color: #fff; text-wrap: pretty; }
+
+.fa .actions { position: absolute; z-index: 3; right: var(--edge); bottom: 64px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.fa .actions.off { transform: translateY(12px); }
+
+.fa .crosshair { position: absolute; z-index: 2; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; }
+.fa .crosshair::before, .fa .crosshair::after { content: ""; position: absolute; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55); }
+.fa .crosshair::before { left: 16px; top: 0; width: 2px; height: 34px; }
+.fa .crosshair::after { top: 16px; left: 0; height: 2px; width: 34px; }
+.fa.aim .crosshair { opacity: 1; }
+
+.fa .hoverchip { position: absolute; z-index: 5; left: 0; top: 0; padding: 7px 14px; border-radius: 999px; background: rgba(9, 14, 20, 0.88); border: 1px solid var(--glass-line); font-size: 14px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.12s ease; }
+.fa .hoverchip.on { opacity: 1; }
+
+.fa .nomap { position: absolute; z-index: 2; right: var(--edge); top: 96px; max-width: 320px; font-size: 15px; color: var(--soft); }
+
+/* ---------- The glass panel ---------- */
+
+.fa .lower { display: contents; }
+.fa .dock { position: absolute; z-index: 4; right: 40px; bottom: 56px; width: 404px; max-height: calc(100% - 152px); display: flex; flex-direction: column; border-radius: 28px; overflow: hidden; overflow: clip; }
+.fa .dock.off { transform: translateX(18px); }
+/* position: relative keeps the screen-reader-only words inside the scrolling part. */
+.fa .dock-body { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 24px 28px 4px; overscroll-behavior: contain; }
+.fa .dock-foot { flex: none; padding: 16px 28px 22px; }
+.fa .dock-title { font-size: 17px; line-height: 1.4; font-weight: 500; color: #fff; padding-bottom: 18px; }
+.fa .dock-title #dock-rest { color: var(--soft); }
+
+.fa .ans { border-top: 1px solid var(--hair); }
+.fa .ans-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 68px; padding: 8px 0; }
+.fa .ans-label { display: block; font-size: 13px; line-height: 1.3; color: var(--soft); }
+.fa .ans-value { display: block; margin-top: 2px; font-size: 18px; line-height: 1.3; font-weight: 500; color: #fff; }
+.fa .change { flex: none; min-height: 44px; padding: 8px 16px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, 0.12); color: #fff; font-size: 14px; cursor: pointer; }
+.fa .change:hover { background: rgba(255, 255, 255, 0.24); }
+/* A row opens in place: its height eases. Closed, its choices are out of the tab order. */
+.fa .ans-more { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.26s ease; }
+.fa .ans-more > div { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s linear 0.26s; margin: 0 -6px; padding: 0 6px; }
+.fa .ans.open .ans-more { grid-template-rows: 1fr; }
+.fa .ans.open .ans-more > div { visibility: visible; transition: visibility 0s; }
+/* One question at a time: while a row is open, the other rows step aside. */
+.fa.editing .dock-title, .fa.editing .ans:not(.open) { display: none; }
+.fa.editing .ans.open { border-top: 0; }
+.fa .opts { display: flex; flex-wrap: wrap; gap: 8px; padding: 6px 0 6px; }
+.fa .opt { position: relative; display: inline-flex; }
+.fa .opt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.fa .opt span { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.5); font-size: 15px; color: #fff; }
+.fa .opt:hover span { border-color: #fff; background: rgba(255, 255, 255, 0.1); }
+.fa .opt input:checked + span { background: #fff; border-color: #fff; color: #000; font-weight: 700; }
+.fa .opt input:checked + span::before { content: "✓"; }
+.fa .opt input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+.fa .ans-note { padding: 4px 0 16px; font-size: 14px; line-height: 1.45; color: var(--soft); }
+.fa .crop-box { max-height: clamp(120px, calc(100svh - 548px), 320px); overflow-y: auto; margin: 0 -6px; padding: 0 6px 22px; overscroll-behavior: contain;
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 30px), transparent); mask-image: linear-gradient(180deg, #000 calc(100% - 30px), transparent); }
+.fa .crop-group { padding: 12px 0 2px; font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--soft); }
+.fa .crop-find { width: 100%; min-height: 44px; margin: 6px 0 2px; padding: 8px 18px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.5); background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 15px; }
+.fa .crop-find::placeholder { color: #aeb7be; opacity: 1; }
+
+.fa .dock-foot .pill { width: 100%; font-size: 18px; }
+.fa .textbtn { display: block; width: 100%; min-height: 44px; margin-top: 6px; padding: 8px; border: 0; border-radius: 999px; background: transparent; color: #fff; font-size: 15px; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, 0.5); text-underline-offset: 4px; cursor: pointer; }
+.fa .textbtn:hover { text-decoration-color: #fff; background: rgba(255, 255, 255, 0.08); }
+.fa .credit-in { display: none; }
+
+/* The list of fields: the way to pick a field without the map. */
+.fa .list-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.fa .list-head h2 { font-size: 26px; line-height: 1.15; font-weight: 500; letter-spacing: -0.5px; }
+.fa .list-note { margin: 6px 0 14px; font-size: 14px; line-height: 1.45; color: var(--soft); }
+.fa .close { flex: none; width: 44px; height: 44px; min-height: 0; margin: -8px -10px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.12); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.fa .close:hover { background: rgba(255, 255, 255, 0.24); }
+.fa .fieldrow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 10px 6px; border: 0; border-top: 1px solid var(--hair); border-radius: 0; background: transparent; color: #fff; text-align: left; cursor: pointer; }
+.fa .fieldrow:hover, .fa .fieldrow:focus-visible { background: rgba(255, 255, 255, 0.1); }
+.fa .fieldrow b { font-size: 17px; font-weight: 500; }
+.fa .fieldrow span { flex: none; font-size: 14px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.fa .dock-foot .ghost { width: 100%; }
+
+.fa:not([data-dock="answers"]) #dock-answers, .fa:not([data-dock="list"]) #dock-list { display: none; }
+.fa #dock-list-foot { padding-top: 6px; padding-bottom: 14px; }
+.fa #dock-list-foot .textbtn { margin-top: 0; }
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 767px) {
+  .fa { --edge: 16px; }
+  .fa .shade-start { background: linear-gradient(180deg, rgba(2, 4, 11, 0.94) 0%, rgba(2, 4, 11, 0.9) 50%, rgba(2, 4, 11, 0.55) 64%, rgba(2, 4, 11, 0) 82%); }
+  .fa .shade-low { background: linear-gradient(0deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.78) 30%, rgba(0, 0, 0, 0.5) 46%, rgba(0, 0, 0, 0) 64%); }
+  .fa .shade-side { display: none; }
+  .fa .hero { top: 76px; width: auto; right: var(--edge); }
+  .fa .hero h1 { font-size: 46px; white-space: normal; text-wrap: balance; }
+  .fa .hero .lede { margin-top: 12px; font-size: 17px; }
+  .fa .field { height: 64px; margin-top: 22px; }
+  .fa .seg { padding-left: 22px; }
+  .fa .seg input { font-size: 20px; }
+  .fa .seg .unit { padding-right: 8px; }
+  .fa[data-mode="land"] .seg { padding-left: 16px; }
+  .fa .go { width: 48px; height: 48px; margin: 0 8px; }
+  .fa .status { padding-left: 22px; }
+  .fa .row .lab { width: 100%; }
+  .fa .row { margin-top: 12px; }
+  .fa .chip { padding: 8px 14px; }
+  .fa .spin { bottom: 14px; }
+  .fa .credit { bottom: 12px; max-width: 46%; }
+  .fa .topleft { top: 68px; }
+  .fa .place { max-width: calc(100vw - 2 * var(--edge) - 108px); }
+
+  /* The banner, the pills and the panel stack at the bottom. Once a field is found, or the list
+     is open, that stack is one glass sheet. It scrolls inside; "See my plan" stays in view. */
+  .fa .lower { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; max-height: 62%; padding: 0 var(--edge) 58px; }
+  .fa .banner, .fa .actions, .fa .dock { position: static; width: auto; max-height: none; }
+  .fa[data-stage="found"] .banner { width: auto; }
+  .fa .banner h1 { font-size: 42px; letter-spacing: -1.2px; }
+  .fa[data-stage="found"] .banner h1 { font-size: 46px; letter-spacing: -1.6px; }
+  .fa .banner .eyebrow { font-size: 12px; margin-bottom: 6px; }
+  .fa .banner .sub { margin-top: 8px; font-size: 15px; }
+  .fa .sat, .fa[data-stage="found"] .sat { flex-direction: row; align-items: center; margin-top: 12px; gap: 14px; }
+  .fa .sat p { font-size: 13px; }
+  .fa .sat-more { display: none; }
+  .fa .actions { justify-content: flex-start; margin-top: 16px; flex-wrap: nowrap; }
+  .fa .actions .ghost { min-height: 48px; padding: 10px 14px; font-size: 15px; }
+  .fa .credit { font-size: 12px; }
+  .fa:not([data-stage="start"]) .credit { max-width: none; right: var(--edge); }
+
+  .fa .dock, .fa .dock-foot { display: contents; }
+  .fa .dock.off, .fa .banner.off, .fa .actions.off { display: none; }
+  .fa .dock-body { flex: none; overflow: visible; padding: 14px 0 0; }
+  .fa .dock-title { display: none; }
+  .fa .ans-head { min-height: 56px; padding: 5px 0; }
+  .fa .ans-label { font-size: 12px; }
+  .fa .ans-value { font-size: 17px; }
+  .fa .cta { position: sticky; bottom: -14px; z-index: 2; margin: 0 -20px; padding: 12px 20px 14px; background: linear-gradient(180deg, rgba(14, 19, 25, 0) 0, rgba(14, 19, 25, 0.96) 12px); }
+  .fa .cta .pill { min-height: 52px; }
+  .fa.editing .banner { display: none; }
+  .fa .crop-box { max-height: clamp(120px, calc(62svh - 300px), 260px); }
+  .fa[data-dock="answers"] .lower, .fa[data-dock="list"] .lower {
+    display: block; padding: 18px 20px 14px; overflow-y: auto; overscroll-behavior: contain; border-radius: 28px 28px 0 0;
+    background: var(--glass); border-top: 1px solid var(--glass-line);
+    -webkit-backdrop-filter: blur(28px) saturate(1.5); backdrop-filter: blur(28px) saturate(1.5);
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.45);
+  }
+  .fa[data-dock="list"] .banner, .fa[data-dock="list"] .actions { display: none; }
+  .fa[data-dock] .credit, .fa[data-stage="flying"] .credit { display: none; }
+  .fa[data-dock] .credit-in { display: block; margin-top: 4px; font-size: 12px; color: var(--soft); text-align: center; }
+}
+
+@media (max-height: 700px) and (min-width: 768px) {
+  .fa .hero { width: 520px; }
+  .fa .hero h1 { font-size: 64px; }
+  .fa .banner h1 { font-size: 52px; }
+  .fa[data-stage="found"] .banner h1 { font-size: 64px; }
+}
+/* ---------- The built screen ---------- */
+
+.fa [hidden] { display: none !important; }
+.fa .sat-src { display: block; margin-top: 4px; font-size: 13px; color: var(--soft); }
+.fa .status a { color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fa .hero { animation: none; }
+  .fa .piece, .fa .piece.off, .fa .shade, .fa .banner, .fa .banner > *, .fa .ans-more, .fa .ans-more > div, .fa .crosshair, .fa .hoverchip { transition: none; }
+  .fa .hero.off, .fa .topleft.off, .fa .banner.off, .fa .actions.off, .fa .dock.off { transform: none; }
+}
+
+/* The home page's .hero, .pill, .ghost and .cta rules are global; here they are put back to the mock's. */
+.fa .hero { height: auto; min-height: 0; overflow: visible; background: none; }
+.fa .hero::after { content: none; }
+.fa .cta { padding: 0; text-align: left; }
+@media (max-width: 767px) {
+  .fa .cta { padding: 12px 20px 14px; }
+}

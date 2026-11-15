@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fieldproof</title>
+<meta name="description" content="Fieldproof helps a dryland farmer decide what to grow between wheat years, for his own field and his own finances.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23102333'/%3E%3Cpath d='M6 24 12 8h4L10 24zM14 24 20 8h4L18 24z' fill='%239fd36b'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/finder.css">
+<link rel="stylesheet" href="css/plan.css">
+<link rel="stylesheet" href="css/proof.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap"></head>
+<body>
+
+<a class="skip" id="skip" href="#screen">Skip to main content</a>
+
+<!-- The router shows this on Fields, Plan and Proof and fills it with the brand and the Fields, Plan, Proof links. -->
+<header id="app-header" class="apphead" hidden></header>
+
+<!-- One screen at a time is mounted here by js/main.js. -->
+<main id="screen" tabindex="-1"></main>
+
+<!-- Short spoken updates. Set its text to announce a changed result. -->
+<div id="live" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<noscript><p>Fieldproof needs JavaScript to show the map and your plan. Please turn it on and reload.</p></noscript>
+
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

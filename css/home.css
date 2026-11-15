@@ -1,0 +1,353 @@
+/* Home screen: dark, with the drifting aerial photo as the hero. */
+
+.home {
+  background: #000;
+  color: #fff;
+}
+
+.home ul,
+.home ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  /* Shown until the photo loads, and if it cannot load. */
+  background: linear-gradient(180deg, #24361a 0%, #0c1608 100%);
+}
+
+.hero-film {
+  position: absolute;
+  inset: 0;
+}
+
+/* Dark at the top and bottom, where the words sit. The shade is strong enough that white text
+   passes 4.5:1 (3:1 for the large headline) whatever the photo shows behind it. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.58) 14%,
+    rgba(0, 0, 0, 0) 36%,
+    rgba(0, 0, 0, 0.2) 46%,
+    rgba(0, 0, 0, 0.62) 66%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  pointer-events: none;
+}
+
+.topbar {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topbar nav {
+  display: flex;
+  gap: 8px;
+}
+
+.navlink {
+  background: transparent;
+  color: #fff;
+  border: 0;
+  padding: 10px 12px;
+  font-size: 15px;
+}
+
+.navlink:hover {
+  text-decoration: underline;
+}
+
+/* Says what the photo is, and holds the pause button. It has its own dark plate. */
+.filmtag {
+  position: absolute;
+  z-index: 2;
+  right: 48px;
+  top: 84px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(2, 6, 17, 0.72);
+  font-size: 13px;
+  color: #e6eaed;
+  text-align: right;
+}
+
+.filmtag p {
+  margin: 0;
+}
+
+.motion-toggle {
+  margin-top: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+}
+
+.herotext {
+  position: absolute;
+  z-index: 2;
+  left: 48px;
+  right: 48px;
+  bottom: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.herotext h1 {
+  font-size: 64px;
+  line-height: 1.02;
+  font-weight: 500;
+  letter-spacing: -1.5px;
+  margin: 0;
+  max-width: 760px;
+}
+
+.herotext p {
+  margin: 14px 0 0;
+  color: #fff;
+  max-width: 520px;
+  font-size: 19px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.pill {
+  background: #fff;
+  color: #000;
+  font-weight: 700;
+}
+
+.ghost {
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+}
+
+/* ---------- Bands ---------- */
+
+.band {
+  padding: 96px 48px;
+  border-top: 1px solid #222;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* A band takes focus when a "scroll to" button brings it into view. It is a place, not a control. */
+.band:focus,
+.band:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.band h2 {
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  margin: 0 0 40px;
+  max-width: 760px;
+  line-height: 1.15;
+}
+
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--leaf);
+  margin: 0 0 14px;
+}
+
+.band-note {
+  margin: 16px 0 0;
+  font-size: 14px;
+  color: #b9c0c6;
+}
+
+/* The point of the three numbers: said plainly, right under them. */
+.band-point {
+  margin: 32px 0 0;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.4px;
+  max-width: 760px;
+  color: #fff;
+}
+
+/* Small closed disclosures: sources and fine print, one tap away. */
+.home-more {
+  margin-top: 8px;
+  max-width: 760px;
+  color: #b9c0c6;
+  font-size: 14px;
+}
+
+.home-more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.45);
+  text-underline-offset: 4px;
+}
+
+.home-more > summary::-webkit-details-marker { display: none; }
+.home-more > summary::before { content: "+"; width: 12px; }
+.home-more[open] > summary::before { content: "−"; }
+.home-more > summary:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
+.home-more p { margin: 4px 0 0; }
+.home-more ul { margin: 4px 0 0; padding-left: 20px; }
+.home-more li { margin: 2px 0; }
+
+.band-lede {
+  margin: 0;
+  max-width: 760px;
+  color: #b9c0c6;
+}
+
+/* The three 2021 numbers, each with its source under it. */
+.stats3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1px;
+  background: #2a2a2a;
+  border: 1px solid #2a2a2a;
+}
+
+.stats3 li {
+  background: #000;
+  padding: 28px;
+}
+
+.stats3 strong {
+  display: block;
+  font-size: 52px;
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+
+.stats3 span {
+  color: #b9c0c6;
+}
+
+.stats3 small {
+  display: block;
+  font-size: 13px;
+  color: #8d969d;
+  margin-top: 12px;
+}
+
+.steps3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+}
+
+.step-number {
+  font-size: 14px;
+  color: #8d969d;
+  border-top: 1px solid #444;
+  padding-top: 14px;
+  margin-bottom: 8px;
+}
+
+.steps3 h3 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.steps3 p {
+  margin: 0;
+  color: #b9c0c6;
+}
+
+.cta {
+  text-align: center;
+  padding: 110px 48px 130px;
+}
+
+.cta h2 {
+  margin: 0 auto 26px;
+}
+
+/* ---------- Narrow screens ---------- */
+
+@media (max-width: 860px) {
+  .topbar {
+    padding: 12px 16px;
+  }
+
+  .topbar nav {
+    display: none;
+  }
+
+  .filmtag {
+    right: 16px;
+    top: 68px;
+  }
+
+  .herotext {
+    left: 16px;
+    right: 16px;
+    bottom: 32px;
+  }
+
+  .herotext h1 {
+    font-size: 40px;
+    letter-spacing: -0.8px;
+  }
+
+  .band {
+    padding: 64px 16px;
+  }
+
+  .band h2 {
+    font-size: 30px;
+  }
+
+  .cta {
+    padding: 80px 16px 96px;
+  }
+}
